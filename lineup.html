@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>本日のスタメン | オイシックス新潟アルビレックスBC</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+      background: #F0F2F5;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* ── ヘッダー ── */
+    .header {
+      background: #0B2363;
+      color: white;
+      padding: 20px 16px 24px;
+      text-align: center;
+    }
+    .header-team {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      opacity: 0.75;
+      margin-bottom: 4px;
+    }
+    .header-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+    .header-accent {
+      display: inline-block;
+      width: 40px;
+      height: 3px;
+      background: #E8A800;
+      border-radius: 2px;
+      margin-top: 10px;
+    }
+
+    /* ── 試合情報カード ── */
+    .game-card {
+      background: white;
+      margin: 16px 16px 0;
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-left: 4px solid #E8A800;
+    }
+    .game-card-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: #888;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .game-meta {
+      display: grid;
+      gap: 7px;
+    }
+    .game-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+    .game-meta-icon {
+      font-size: 16px;
+      width: 22px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .game-meta-vs {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0B2363;
+    }
+
+    /* ── セクション ── */
+    .section {
+      margin: 16px 16px 0;
+    }
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #0B2363;
+      letter-spacing: 0.08em;
+      padding: 0 2px 8px;
+      border-bottom: 2px solid #0B2363;
+      margin-bottom: 10px;
+    }
+
+    /* ── スタメンカード ── */
+    .player-card {
+      background: white;
+      border-radius: 10px;
+      padding: 13px 14px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .player-order {
+      font-size: 22px;
+      font-weight: 900;
+      color: #E8A800;
+      width: 28px;
+      text-align: center;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+    .player-position-badge {
+      background: #0B2363;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      letter-spacing: 0.05em;
+    }
+    .player-info {
+      flex: 1;
+    }
+    .player-name {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .player-number {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 2px;
+    }
+    .tb-btn {
+      background: #5B5BD6;
+      color: white;
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 9px;
+      border-radius: 6px;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .tb-btn:hover { opacity: 0.85; }
+
+    /* ── その他出場選手 ── */
+    .bench-card {
+      background: white;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .bench-dot {
+      width: 6px;
+      height: 6px;
+      background: #ccc;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .bench-position {
+      font-size: 11px;
+      color: #666;
+      width: 28px;
+      flex-shrink: 0;
+    }
+    .bench-name {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .bench-number {
+      font-size: 11px;
+      color: #aaa;
+      font-weight: 400;
+    }
+
+    /* ── TalentBook 説明 ── */
+    .tb-note {
+      margin: 16px 16px;
+      background: #EEF0FF;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 12px;
+      color: #444;
+      line-height: 1.6;
+    }
+    .tb-note strong {
+      color: #5B5BD6;
+    }
+
+    /* ── フッター ── */
+    .footer {
+      text-align: center;
+      padding: 20px 16px 32px;
+      font-size: 11px;
+      color: #aaa;
+    }
+
+    /* ── ローディング / エラー ── */
+    .status-msg {
+      text-align: center;
+      padding: 40px 20px;
+      color: #888;
+      font-size: 14px;
+    }
+    .error-msg {
+      margin: 16px;
+      background: #fff3f3;
+      border: 1px solid #fcc;
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #c00;
+      line-height: 1.6;
+    }
+    .error-msg a { color: #0B2363; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-team">オイシックス新潟アルビレックスBC</div>
+  <div class="header-title">本日のスタメン</div>
+  <div class="header-accent"></div>
+</div>
+
+<div id="app">
+  <div class="status-msg">読み込み中…</div>
+</div>
+
+<div class="tb-note">
+  <strong>TalentBook（タレントブック）</strong>とは？<br>
+  各選手のプロフィール・経歴・インタビューが読めるページです。ぜひ応援したい選手のことをもっと知ってみてください！
+</div>
+
+<div class="footer">
+  <div>オイシックス新潟アルビレックスBC</div>
+</div>
+
+<script>
+// ============================================================
+//  ★ 設定欄 ── スプレッドシートIDを確認してください ★
+// ============================================================
+const SHEET_ID  = '15bm0FJDSXohclI0mYlEQjAwMihqcg6hu48n-Zhp8nl4';
+const SHEET_GID = '0';   // 「入力」シートのgid（最初のシートは通常 0）
+// ============================================================
+
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/pub?gid=${SHEET_GID}&single=true&output=csv`;
+
+// ── CSV パーサー ────────────────────────────────────────────
+function parseCSV(text) {
+  const rows = [];
+  const lines = text.split('\n');
+  for (const line of lines) {
+    const cells = [];
+    let inQuote = false, cell = '';
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQuote && line[i+1] === '"') { cell += '"'; i++; }
+        else inQuote = !inQuote;
+      } else if (ch === ',' && !inQuote) {
+        cells.push(cell.trim()); cell = '';
+      } else {
+        cell += ch;
+      }
+    }
+    cells.push(cell.trim());
+    rows.push(cells);
+  }
+  return rows;
+}
+
+// ── データ解析 ───────────────────────────────────────────────
+// スプレッドシート「入力」シートの想定レイアウト：
+//   Row 1:  日付, 対戦相手, 球場, 試合開始            ← ヘッダー行
+//   Row 2:  2026/06/22, 読売..., HARD OFF..., 13:00  ← 値（dropdown/入力）
+//   Row 3:  （空行）
+//   Row 4:  打順, 背番号, 選手名, 守備位置, スタメン, TalentBookURL  ← ヘッダー行
+//   Row 5+: 1, 3, =VLOOKUP(...), 三塁, TRUE, =VLOOKUP(...)
+function parseData(rows) {
+  // Row 0: 試合情報ヘッダー / Row 1: 試合情報値
+  const gameHeaders = rows[0] || [];
+  const gameValues  = rows[1] || [];
+  const gameInfo = {};
+  gameHeaders.forEach((h, i) => { if (h) gameInfo[h] = gameValues[i] || ''; });
+
+  // 空行を探してスタメンデータの開始行を特定
+  let lineupStart = -1;
+  for (let i = 2; i < rows.length; i++) {
+    if (rows[i].every(c => !c)) {
+      lineupStart = i + 2; // 空行の次がヘッダー行 → さらに次がデータ行
+      break;
+    }
+  }
+
+  const players = [];
+  if (lineupStart > 0) {
+    for (let i = lineupStart; i < rows.length; i++) {
+      const row = rows[i];
+      const name = (row[2] || '').trim();
+      // 空行・VLOOKUPエラー行（#N/A等）はスキップ
+      if (!name || name.startsWith('#')) continue;
+      players.push({
+        order:   row[0] || '',
+        number:  row[1] || '',
+        name:    name,
+        pos:     row[3] || '',
+        starter: (row[4] || '').toUpperCase() === 'TRUE',
+        tbUrl:   (row[5] || '').startsWith('http') ? row[5] : ''
+      });
+    }
+  }
+
+  return { gameInfo, players };
+}
+
+// ── 日付フォーマット ─────────────────────────────────────────
+function formatDate(str) {
+  const d = new Date(str.replace(/\//g, '-'));
+  if (isNaN(d)) return str;
+  const days = ['日','月','火','水','木','金','土'];
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
+}
+
+// ── 描画 ─────────────────────────────────────────────────────
+function render(gameInfo, players) {
+  const starters = players.filter(p => p.starter);
+  const bench    = players.filter(p => !p.starter);
+
+  const tbLink = (p) => p.tbUrl
+    ? `<a class="tb-btn" href="${p.tbUrl}" target="_blank" rel="noopener">プロフィール ›</a>`
+    : '';
+
+  const starterCards = starters.map(p => `
+    <div class="player-card">
+      <div class="player-order">${p.order}</div>
+      <div class="player-position-badge">${p.pos}</div>
+      <div class="player-info">
+        <div class="player-name">${p.name}</div>
+        ${p.number ? `<div class="player-number">#${p.number}</div>` : ''}
+      </div>
+      ${tbLink(p)}
+    </div>
+  `).join('');
+
+  const benchCards = bench.map(p => `
+    <div class="bench-card">
+      <div class="bench-dot"></div>
+      <div class="bench-position">${p.pos}</div>
+      <div class="bench-name">${p.name}${p.number ? `<span class="bench-number"> #${p.number}</span>` : ''}</div>
+      ${tbLink(p)}
+    </div>
+  `).join('');
+
+  const gameDate    = gameInfo['日付']     ? formatDate(gameInfo['日付'])   : '—';
+  const opponent    = gameInfo['対戦相手'] || '—';
+  const venue       = gameInfo['球場']     || '';
+  const gameTime    = gameInfo['試合開始'] || '';
+
+  const venueRow  = venue    ? `<div class="game-meta-row"><span class="game-meta-icon">🏟️</span>${venue}</div>` : '';
+  const timeRow   = gameTime ? `<div class="game-meta-row"><span class="game-meta-icon">⏰</span>${gameTime} 試合開始</div>` : '';
+  const benchSection = bench.length ? `
+    <div class="section">
+      <div class="section-title">その他の出場選手</div>
+      ${benchCards}
+    </div>
+  ` : '';
+
+  document.getElementById('app').innerHTML = `
+    <div class="game-card">
+      <div class="game-card-title">TODAY'S GAME</div>
+      <div class="game-meta">
+        <div class="game-meta-row"><span class="game-meta-icon">📅</span>${gameDate}</div>
+        <div class="game-meta-row"><span class="game-meta-icon">⚾</span><span class="game-meta-vs">VS ${opponent}</span></div>
+        ${venueRow}
+        ${timeRow}
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">スターティングラインナップ</div>
+      ${starters.length ? starterCards : '<div class="status-msg">スタメンデータがありません</div>'}
+    </div>
+
+    ${benchSection}
+  `;
+}
+
+// ── メイン ───────────────────────────────────────────────────
+async function main() {
+  if (SHEET_ID === 'YOUR_GOOGLE_SHEET_ID') {
+    document.getElementById('app').innerHTML = `
+      <div class="error-msg">
+        ⚙️ <strong>初期設定が必要です</strong><br><br>
+        このHTMLファイルの <code>SHEET_ID</code> にGoogleスプレッドシートのIDを設定してください。<br>
+        詳しくは <code>docs/lineup_setup.md</code> を参照してください。
+      </div>
+    `;
+    return;
+  }
+
+  try {
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const rows = parseCSV(text);
+    const { gameInfo, players } = parseData(rows);
+    render(gameInfo, players);
+  } catch (e) {
+    document.getElementById('app').innerHTML = `
+      <div class="error-msg">
+        ❌ データを読み込めませんでした。<br><br>
+        スプレッドシートが <strong>「ウェブに公開」</strong> されているか確認してください。<br>
+        <small>（ファイル → 共有 → ウェブに公開 → CSVで公開）</small><br><br>
+        <small style="color:#aaa">エラー詳細: ${e.message}</small>
+      </div>
+    `;
+  }
+}
+
+main();
+</script>
+</body>
+</html>

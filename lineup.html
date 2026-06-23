@@ -412,16 +412,16 @@ function parseData(rows) {
     for (let i = lineupHeaderRow + 1; i < rows.length; i++) {
       const row = rows[i];
       const order = (row[0] || '').trim();
-      const name  = (row[3] || '').trim();
+      const name  = (row[4] || '').trim(); // E列：氏名
       if (!name || name.startsWith('#')) continue;
       players.push({
         order,
-        pos:     posName((row[1] || '').trim()),
-        number:  (row[2] || '').trim(),
-        name,
+        pos:     posName((row[2] || '').trim()), // C列：守備位置名（日本語）
+        number:  (row[3] || '').trim(),           // D列：背番号
+        name,                                      // E列：氏名（row[4]）
         starter: /^\d+$/.test(order) || order === 'P',
         pitcher: order === 'P',
-        tbUrl:   (row[4] || '').trim().startsWith('http') ? (row[4] || '').trim() : ''
+        tbUrl:   (row[5] || '').trim().startsWith('http') ? (row[5] || '').trim() : '' // F列
       });
     }
   }

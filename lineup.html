@@ -627,11 +627,36 @@ function buildHighlightsHtml(gameInfo, players, stats) {
   const dateNum = gameInfo['日付'] ? new Date(gameInfo['日付'].replace(/\//g,'-')).getDate() : 0;
   const mode = dateNum % 4;
 
-  // ── チーム成績テキスト（常時）──
+  // ── シーズン成績テキスト（常時）──
   let teamLine = '';
   if (oisix) {
     const rankStr = oisix.rank ? `東地区${oisix.rank}位` : '';
     teamLine = `${rankStr ? rankStr + '・' : ''}${oisix.wins}勝${oisix.losses}敗${oisix.ties > 0 ? oisix.ties+'分' : ''}（勝率${oisix.pct}）`;
+  }
+
+  // ── 今月成績・直近成績 ──
+  let recentLine = '';
+  const rec = stats.recent;
+  if (rec && !rec.error) {
+    const { streak, monthRecord, recent5 } = rec;
+    const mw = monthRecord ? monthRecord.wins   : 0;
+    const ml = monthRecord ? monthRecord.losses : 0;
+    const mt = monthRecord ? monthRecord.ties   : 0;
+    const monthLabel = mw > ml ? '勝ち越し中' : mw < ml ? '負け越し中' : '同率';
+    const monthPart  = `${rec.month}月 ${mw}勝${ml}敗${mt > 0 ? mt+'分' : ''}（${monthLabel}）`;
+
+    if (streak && streak.count >= 3) {
+      const streakEmoji = streak.type === 'W' ? '🔥' : '💦';
+      const streakLabel = streak.type === 'W'
+        ? `${streak.count}連勝中 ${streakEmoji}`
+        : `${streak.count}連敗中 ${streakEmoji}`;
+      recentLine = `${monthPart}　${streakLabel}`;
+    } else if (recent5 && recent5.count >= 3) {
+      const r5Results = (recent5.games || []).map(r => r === 'W' ? '○' : r === 'L' ? '●' : '△').join('');
+      recentLine = `${monthPart}　直近${recent5.count}試合: ${r5Results}`;
+    } else {
+      recentLine = monthPart;
+    }
   }
 
   // ── 対戦成績 ──
@@ -683,7 +708,7 @@ function buildHighlightsHtml(gameInfo, players, stats) {
   const [icon, titleText] = titles[mode] || titles[0];
 
   // ── 本文組み立て ──
-  const lines = [teamLine, h2hLine, pitcherLine, batterLine].filter(Boolean);
+  const lines = [teamLine, recentLine, h2hLine, pitcherLine, batterLine].filter(Boolean);
   const bodyHtml = lines.join('<br>');
 
   return `

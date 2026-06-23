@@ -254,9 +254,15 @@
       line-height: 1.55;
       margin-top: 4px;
     }
+    .btn-row {
+      display: flex;
+      flex-direction: row;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
     .tb-btn {
       display: inline-block;
-      margin-top: 6px;
       background: #5B5BD6;
       color: white;
       text-decoration: none;
@@ -266,13 +272,10 @@
       border-radius: 5px;
       letter-spacing: 0.04em;
       white-space: nowrap;
-      align-self: flex-start;
     }
     .tb-btn:hover { opacity: 0.85; }
     .profile-btn {
       display: inline-block;
-      margin-top: 6px;
-      margin-left: 5px;
       background: transparent;
       color: #015095;
       text-decoration: none;
@@ -283,7 +286,6 @@
       border: 1.5px solid #015095;
       letter-spacing: 0.04em;
       white-space: nowrap;
-      align-self: flex-start;
     }
     .profile-btn:hover { background: #015095; color: white; }
 
@@ -674,7 +676,7 @@ function buildPlayerCard(p, orderLabel, isPitcher) {
 
   const pUrl = profileUrl(p.number);
   const profileHtml = pUrl
-    ? `<a class="profile-btn" href="${pUrl}" target="_blank" rel="noopener">公式プロフィール ›</a>`
+    ? `<a class="profile-btn" href="${pUrl}" target="_blank" rel="noopener">プロフィール ›</a>`
     : '';
 
   const bioHtml = bio ? `<div class="player-bio">${bio}</div>` : '';
@@ -692,7 +694,7 @@ function buildPlayerCard(p, orderLabel, isPitcher) {
           ${p.number ? `<span class="player-number">背番号 ${p.number}</span>` : ''}
         </div>
         ${bioHtml}
-        ${tbHtml}${profileHtml}
+        ${(tbHtml || profileHtml) ? `<div class="btn-row">${tbHtml}${profileHtml}</div>` : ''}
       </div>
     </div>
   `;
@@ -718,14 +720,14 @@ function render(gameInfo, players) {
       : '';
     const pUrl = profileUrl(p.number);
     const profileHtml = pUrl
-      ? `<a class="profile-btn" href="${pUrl}" target="_blank" rel="noopener">公式プロフィール ›</a>`
+      ? `<a class="profile-btn" href="${pUrl}" target="_blank" rel="noopener">プロフィール ›</a>`
       : '';
     return `
       <div class="bench-card">
         <div class="bench-dot"></div>
         <div class="bench-position">${p.pos}</div>
         <div class="bench-name">${p.name}${p.number ? `<span class="bench-number"> 背番号${p.number}</span>` : ''}</div>
-        ${tbHtml}${profileHtml}
+        ${(tbHtml || profileHtml) ? `<div class="btn-row">${tbHtml}${profileHtml}</div>` : ''}
       </div>
     `;
   }).join('');

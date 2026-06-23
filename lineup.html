@@ -319,7 +319,7 @@ function posName(val) {
 // ── 選手写真マップ（背番号 → Google Drive ファイルID）────────
 // ★ 新しい写真を追加するときは Drive のファイルIDをここに追加する
 const PHOTO_MAP = {
-  '0':  '1JF-67Pf_TLm_rNqiCd5mWQxXxRVVRF85', // 高野
+  '0':  '1JF-67Pf_TLm_rNqiCd5mWQxXxRVVRF85', // 高
   '5':  '1rmZ4w6PG58mrg-XWbafQWTPUGYCQoUdx', // 大川
   '7':  '1HbMndsiKa6X4XiWNHGNqDirAXy0vWLba', // 園部
   '9':  '1k5niXh0uc9f8Tciu1u__X4MGSimi_TO-', // 髙山
@@ -344,6 +344,7 @@ const BIO_MAP = {
   '61446': '聖光学院出身の先発右腕。最速148kmのストレートとスライダーを武器に、「仲間のために投げる」ことを誓う2年目。',
   '61487': 'ルーキーながら捕手最多71試合出場を果たした頼れる司令塔。投手とのコミュニケーション力と勝負強い打撃も光る。',
   '61425': '内外野を幅広くこなすユーティリティルーキー。ミート力と頭から突っ込む熱いプレーで1年目のスタメン獲得を狙う。',
+  '61527': 'チームを泥臭く背中で引っ張る、入団4年目のキャプテン内野手。「突進三銃士」に名を連ねる俊足で塁をかき乱し、今季こそNPBの夢を掴む。',
 };
 function bioText(tbUrl) {
   if (!tbUrl) return '';
@@ -473,13 +474,72 @@ function formatDate(str) {
   return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
 }
 
-// ── 待機画面 ─────────────────────────────────────────────────
+// ── 試合カードHTML（共通） ────────────────────────────────────
+function gameCardHtml(gameInfo) {
+  const opponent  = gameInfo['対戦相手'] || '—';
+  const teamColor = TEAM_COLORS[opponent] || '#0B2363';
+  const gameDate  = gameInfo['日付'] ? formatDate(gameInfo['日付']) : '—';
+  const venue     = gameInfo['球場'] || '';
+  const gameTime  = formatTime(gameInfo['試合開始'] || '');
+  const venueRow  = venue    ? `<div class="game-meta-row"><span class="game-meta-icon">🏟️</span>${venue}</div>` : '';
+  const timeRow   = gameTime ? `<div class="game-meta-row"><span class="game-meta-icon">⏰</span>${gameTime} 試合開始</div>` : '';
+  return `
+    <div class="game-card">
+      <div class="game-card-title">TODAY'S GAME</div>
+      <div class="game-meta">
+        <div class="game-meta-row"><span class="game-meta-icon">📅</span>${gameDate}</div>
+        <div class="game-meta-row"><span class="game-meta-icon">⚾</span><span class="game-meta-vs" style="color:${teamColor}">VS ${opponent}</span></div>
+        ${venueRow}
+        ${timeRow}
+      </div>
+    </div>
+  `;
+}
+
+// ── 試合開始15分前を過ぎているか ─────────────────────────────
+function isTimeToShowLineup(rawTimeVal) {
+  if (!rawTimeVal) return true; // 時刻未設定なら即表示
+  const timeStr = formatTime(rawTimeVal);
+  if (!timeStr || !timeStr.includes(':')) return true;
+  const [h, m] = timeStr.split(':').map(Number);
+  const now = new Date();
+  const gameStart = new Date(now);
+  gameStart.setHours(h, m, 0, 0);
+  const showTime = new Date(gameStart.getTime() - 15 * 60 * 1000); // 15分前
+  return now >= showTime;
+}
+
+// ── 待機画面（試合なし or 当日でない） ───────────────────────
 function renderWaiting() {
   document.getElementById('app').innerHTML = `
     <div class="waiting-card">
       <div class="waiting-emoji">⚾</div>
+      <div class="waiting-title">本日の試合情報はありません</div>
+      <div class="waiting-sub">試合日にまたアクセスしてみてください！</div>
+    </div>
+  `;
+}
+
+// ── 試合情報は表示 ＋ スタメン待機 ───────────────────────────
+function renderGameWithWaiting(gameInfo) {
+  const rawTime = gameInfo['試合開始'] || '';
+  const timeStr = formatTime(rawTime);
+  let announceNote = '';
+  if (timeStr && timeStr.includes(':')) {
+    const [h, m] = timeStr.split(':').map(Number);
+    const gameStart = new Date();
+    gameStart.setHours(h, m, 0, 0);
+    const showAt = new Date(gameStart.getTime() - 15 * 60 * 1000);
+    const sh = showAt.getHours();
+    const sm = showAt.getMinutes().toString().padStart(2, '0');
+    announceNote = `<br><span style="color:#aaa;font-size:0.85em">${sh}:${sm} 頃発表予定</span>`;
+  }
+  document.getElementById('app').innerHTML = `
+    ${gameCardHtml(gameInfo)}
+    <div class="waiting-card" style="margin-top:16px">
+      <div class="waiting-emoji">⏳</div>
       <div class="waiting-title">スタメン発表まであと少し！</div>
-      <div class="waiting-sub">楽しみに待っててね！<br>発表されたらこのページを更新してみてください。</div>
+      <div class="waiting-sub">試合開始15分前にこのページを更新してみてね。${announceNote}</div>
     </div>
   `;
 }
@@ -549,14 +609,6 @@ function render(gameInfo, players) {
     `;
   }).join('');
 
-  const opponent  = gameInfo['対戦相手'] || '—';
-  const teamColor = TEAM_COLORS[opponent] || '#0B2363';
-  const gameDate  = gameInfo['日付']      ? formatDate(gameInfo['日付']) : '—';
-  const venue     = gameInfo['球場']      || '';
-  const gameTime  = formatTime(gameInfo['試合開始'] || '');
-
-  const venueRow = venue    ? `<div class="game-meta-row"><span class="game-meta-icon">🏟️</span>${venue}</div>` : '';
-  const timeRow  = gameTime ? `<div class="game-meta-row"><span class="game-meta-icon">⏰</span>${gameTime} 試合開始</div>` : '';
   const benchSection = bench.length ? `
     <div class="section">
       <div class="section-title">その他の出場選手</div>
@@ -565,15 +617,7 @@ function render(gameInfo, players) {
   ` : '';
 
   document.getElementById('app').innerHTML = `
-    <div class="game-card">
-      <div class="game-card-title">TODAY'S GAME</div>
-      <div class="game-meta">
-        <div class="game-meta-row"><span class="game-meta-icon">📅</span>${gameDate}</div>
-        <div class="game-meta-row"><span class="game-meta-icon">⚾</span><span class="game-meta-vs" style="color:${teamColor}">VS ${opponent}</span></div>
-        ${venueRow}
-        ${timeRow}
-      </div>
-    </div>
+    ${gameCardHtml(gameInfo)}
 
     <div class="section">
       <div class="section-title">スターティングラインナップ</div>
@@ -596,9 +640,14 @@ async function main() {
     const dateStr   = gameInfo['日付'] || '';
     const hasLineup = players.some(p => p.starter);
 
-    if (!isToday(dateStr) || !hasLineup) {
+    if (!isToday(dateStr)) {
+      // 当日でない → 試合なし画面
       renderWaiting();
+    } else if (!hasLineup || !isTimeToShowLineup(gameInfo['試合開始'])) {
+      // 当日だが、スタメン未入力 or 発表15分前未満 → 試合情報＋待機
+      renderGameWithWaiting(gameInfo);
     } else {
+      // 当日 ＆ 発表時刻到達 → フル表示
       render(gameInfo, players);
     }
   } catch (e) {

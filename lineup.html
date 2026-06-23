@@ -261,9 +261,9 @@
       flex-wrap: wrap;
       margin-top: 6px;
     }
-    .tb-btn {
+    .tb-btn, .profile-btn {
       display: inline-block;
-      background: #5B5BD6;
+      background: #015095;
       color: white;
       text-decoration: none;
       font-size: 10px;
@@ -273,21 +273,7 @@
       letter-spacing: 0.04em;
       white-space: nowrap;
     }
-    .tb-btn:hover { opacity: 0.85; }
-    .profile-btn {
-      display: inline-block;
-      background: transparent;
-      color: #015095;
-      text-decoration: none;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 5px;
-      border: 1.5px solid #015095;
-      letter-spacing: 0.04em;
-      white-space: nowrap;
-    }
-    .profile-btn:hover { background: #015095; color: white; }
+    .tb-btn:hover, .profile-btn:hover { opacity: 0.85; }
 
     /* ── その他出場選手 ── */
     .bench-card {
@@ -694,7 +680,7 @@ function buildPlayerCard(p, orderLabel, isPitcher) {
           ${p.number ? `<span class="player-number">背番号 ${p.number}</span>` : ''}
         </div>
         ${bioHtml}
-        ${(tbHtml || profileHtml) ? `<div class="btn-row">${tbHtml}${profileHtml}</div>` : ''}
+        ${(tbHtml || profileHtml) ? `<div class="btn-row">${profileHtml}${tbHtml}</div>` : ''}
       </div>
     </div>
   `;
@@ -727,7 +713,7 @@ function render(gameInfo, players) {
         <div class="bench-dot"></div>
         <div class="bench-position">${p.pos}</div>
         <div class="bench-name">${p.name}${p.number ? `<span class="bench-number"> 背番号${p.number}</span>` : ''}</div>
-        ${(tbHtml || profileHtml) ? `<div class="btn-row">${tbHtml}${profileHtml}</div>` : ''}
+        ${(tbHtml || profileHtml) ? `<div class="btn-row">${profileHtml}${tbHtml}</div>` : ''}
       </div>
     `;
   }).join('');

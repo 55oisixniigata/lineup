@@ -715,7 +715,7 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     }
   }
 
-  // ── チーム内ランキング算出ヘルパー ──
+  // ── ランキング算出ヘルパー ──
   function teamRank(name, arr, field, asc) {
     const clean = n => n.replace(/\s+/g, '');
     const valid = arr.filter(x => x[field] !== undefined && x[field] !== null);
@@ -723,8 +723,15 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     const idx = sorted.findIndex(x => clean(x.name) === clean(name));
     return idx >= 0 ? idx + 1 : null;
   }
-  function rankLabel(r) {
-    return r === 1 ? 'チームトップ' : r === 2 ? 'チーム2位' : r === 3 ? 'チーム3位' : null;
+  function leagueRank(name, stats, field) {
+    const cleanName = name.replace(/\s+/g, '');
+    const lr = stats.leagueRanks || {};
+    return lr[cleanName] ? lr[cleanName][field] : null;
+  }
+  function rankLabel(r, scope) {
+    if (!r) return null;
+    const s = scope || 'チーム';
+    return r === 1 ? `${s}トップ` : r === 2 ? `${s}2位` : r === 3 ? `${s}3位` : null;
   }
 
   // ── 注目ポイント組み立て ──
@@ -763,11 +770,17 @@ function buildHighlightsHtml(gameInfo, players, stats) {
   if (pitcherP) {
     if (pStat) {
       const pitchAll = (stats.pitching || []).filter(p => p.apps >= 5);
-      const eraRank  = teamRank(pitcherP.name, pitchAll, 'era', true);
-      const soRank   = teamRank(pitcherP.name, stats.pitching || [], 'so');
+      const eraRankL = leagueRank(pitcherP.name, stats, 'era_rank');
+      const soRankL  = leagueRank(pitcherP.name, stats, 'so_rank');
+      const eraRankT = teamRank(pitcherP.name, pitchAll, 'era', true);
+      const soRankT  = teamRank(pitcherP.name, stats.pitching || [], 'so');
+      const eraRank  = eraRankL || eraRankT;
+      const soRank   = soRankL  || soRankT;
+      const eraScope = eraRankL ? 'リーグ' : 'チーム';
+      const soScope  = soRankL  ? 'リーグ' : 'チーム';
       const pitchHighlights = [];
-      if (rankLabel(eraRank) && pStat.era !== '-.--') pitchHighlights.push(`${rankLabel(eraRank)}の防御率${pStat.era}`);
-      if (rankLabel(soRank) && pStat.so > 0)          pitchHighlights.push(`${rankLabel(soRank)}の${pStat.so}奪三振`);
+      if (rankLabel(eraRank, eraScope) && pStat.era !== '-.--') pitchHighlights.push(`${rankLabel(eraRank, eraScope)}の防御率${pStat.era}`);
+      if (rankLabel(soRank,  soScope)  && pStat.so > 0)         pitchHighlights.push(`${rankLabel(soRank, soScope)}の${pStat.so}奪三振`);
       const recStr = `${pStat.wins}勝${pStat.losses}敗`;
       if (pitchHighlights.length > 0) {
         noteParts.push(`先発は${pitcherP.name}（${recStr}）。${pitchHighlights.slice(0,2).join('、')}を誇る。`);
@@ -786,16 +799,24 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     const { p: fp, s: fs } = bStats[idx];
     const batAll = stats.batting || [];
     const batQual = batAll.filter(b => b.ab >= 20);
-    const hrRank  = teamRank(fp.name, batAll,  'hr');
-    const rbiRank = teamRank(fp.name, batAll,  'rbi');
-    const sbRank  = teamRank(fp.name, batAll,  'sb');
-    const avgRank = teamRank(fp.name, batQual, 'avg');
-    // チーム内上位に入っているスタッツだけ紹介
+    // リーグ順位を優先、なければチーム順位
+    const hrRankL  = leagueRank(fp.name, stats, 'hr_rank');
+    const rbiRankL = leagueRank(fp.name, stats, 'rbi_rank');
+    const sbRankL  = leagueRank(fp.name, stats, 'sb_rank');
+    const avgRankL = leagueRank(fp.name, stats, 'avg_rank');
+    const hrRank   = hrRankL  || teamRank(fp.name, batAll,  'hr');
+    const rbiRank  = rbiRankL || teamRank(fp.name, batAll,  'rbi');
+    const sbRank   = sbRankL  || teamRank(fp.name, batAll,  'sb');
+    const avgRank  = avgRankL || teamRank(fp.name, batQual, 'avg');
+    const hrScope  = hrRankL  ? 'リーグ' : 'チーム';
+    const rbiScope = rbiRankL ? 'リーグ' : 'チーム';
+    const sbScope  = sbRankL  ? 'リーグ' : 'チーム';
+    const avgScope = avgRankL ? 'リーグ' : 'チーム';
     const batHighlights = [];
-    if (rankLabel(hrRank)  && fs.hr  >= 2) batHighlights.push(`${rankLabel(hrRank)}の${fs.hr}本塁打`);
-    if (rankLabel(rbiRank) && fs.rbi >= 5) batHighlights.push(`${rankLabel(rbiRank)}の${fs.rbi}打点`);
-    if (rankLabel(sbRank)  && fs.sb  >= 3) batHighlights.push(`${rankLabel(sbRank)}の${fs.sb}盗塁`);
-    if (rankLabel(avgRank) && parseFloat(fs.avg) >= 0.240) batHighlights.push(`${rankLabel(avgRank)}の打率${fs.avg}`);
+    if (rankLabel(hrRank,  hrScope)  && fs.hr  >= 2) batHighlights.push(`${rankLabel(hrRank,  hrScope)}の${fs.hr}本塁打`);
+    if (rankLabel(rbiRank, rbiScope) && fs.rbi >= 5) batHighlights.push(`${rankLabel(rbiRank, rbiScope)}の${fs.rbi}打点`);
+    if (rankLabel(sbRank,  sbScope)  && fs.sb  >= 3) batHighlights.push(`${rankLabel(sbRank,  sbScope)}の${fs.sb}盗塁`);
+    if (rankLabel(avgRank, avgScope) && parseFloat(fs.avg) >= 0.240) batHighlights.push(`${rankLabel(avgRank, avgScope)}の打率${fs.avg}`);
     if (batHighlights.length > 0) {
       noteParts.push(`打線では${fp.name}に注目。${batHighlights.slice(0,2).join('、')}を記録中だ。`);
     } else {

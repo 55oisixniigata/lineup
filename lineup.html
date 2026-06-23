@@ -23,20 +23,6 @@
       position: relative;
       overflow: hidden;
     }
-    /* 斜めストライプ装飾 */
-    .header::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: repeating-linear-gradient(
-        -55deg,
-        transparent,
-        transparent 18px,
-        rgba(255,255,255,0.025) 18px,
-        rgba(255,255,255,0.025) 20px
-      );
-      pointer-events: none;
-    }
     /* 右上の光彩 */
     .header::after {
       content: '';
@@ -49,8 +35,8 @@
       pointer-events: none;
     }
     .header-logo {
-      width: 80px;
-      height: 80px;
+      width: 130px;
+      height: 130px;
       object-fit: contain;
       margin-bottom: 6px;
       position: relative;

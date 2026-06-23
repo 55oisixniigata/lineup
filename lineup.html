@@ -311,6 +311,60 @@
     .bench-number { font-size: 11px; color: #aaa; font-weight: 400; }
 
 
+    /* ── 見どころ ── */
+    .highlights-card {
+      margin: 8px 16px 0;
+      background: linear-gradient(135deg, #013a6b 0%, #01234a 100%);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .highlights-card::before {
+      content: '';
+      position: absolute;
+      top: -20px; right: -20px;
+      width: 80px; height: 80px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 50%;
+    }
+    .highlights-eyebrow {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      opacity: 0.6;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+    .highlights-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .highlights-body {
+      font-size: 12.5px;
+      line-height: 1.75;
+      opacity: 0.92;
+    }
+    .highlights-stat {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      margin: 0 2px;
+    }
+    .highlights-loading {
+      opacity: 0.5;
+      font-size: 12px;
+      padding: 10px 0;
+    }
+
     /* ── フッター ── */
     .footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: #aaa; }
 
@@ -350,7 +404,8 @@
 </div>
 
 <script>
-const CSV_URL = 'https://script.google.com/macros/s/AKfycbwMkya55qhQHBNBxsanR9JuKTjCQ3C6avHqE0YqRh0-jCZcFBTsrwuldi3zV5YT_R7e/exec';
+const CSV_URL   = 'https://script.google.com/macros/s/AKfycbwMkya55qhQHBNBxsanR9JuKTjCQ3C6avHqE0YqRh0-jCZcFBTsrwuldi3zV5YT_R7e/exec';
+const STATS_URL = CSV_URL + '?mode=stats';
 
 // ── 守備位置番号マップ（数字 → 表示名）──────────────────────
 // スプシのB列に番号を入力した場合に変換。テキストのまま入力しても動く
@@ -512,6 +567,134 @@ function bioText(tbUrl, number) {
   return tbBio || (number ? (MANUAL_BIO_MAP[String(number)] || '') : '');
 }
 
+// ── NPB成績取得 ──────────────────────────────────────────────
+async function fetchNpbStats() {
+  try {
+    const res = await Promise.race([
+      fetch(STATS_URL),
+      new Promise((_, r) => setTimeout(() => r(new Error('timeout')), 10000))
+    ]);
+    return await res.json();
+  } catch(e) {
+    return null;
+  }
+}
+
+// 名前正規化（スペース・記号除去）
+function normN(s) { return (s||'').replace(/[*+]/g,'').replace(/[\s　]+/g,''); }
+
+// 名前でリストを検索
+function findStat(name, list) {
+  const n = normN(name);
+  return (list||[]).find(p => {
+    const pn = normN(p.name);
+    return pn === n || pn.includes(n) || n.includes(pn);
+  }) || null;
+}
+
+// 対戦相手の正式名から対戦成績を検索
+function findH2H(opponent, headToHead) {
+  if (!opponent || !headToHead) return null;
+  const key = Object.keys(headToHead).find(k =>
+    k.includes(opponent) || opponent.includes(k.replace(/^(北海道|東北|千葉|東京|埼玉|横浜|大阪|福岡|広島|神奈川)/,''))
+  );
+  return key ? headToHead[key] : null;
+}
+
+// ── 見どころHTML生成 ────────────────────────────────────────
+function buildHighlightsHtml(gameInfo, players, stats) {
+  if (!stats || stats.error) {
+    return `<div class="highlights-card">
+      <div class="highlights-eyebrow">TODAY'S HIGHLIGHTS</div>
+      <div class="highlights-loading">成績データを取得中...</div>
+    </div>`;
+  }
+
+  const opponent  = gameInfo['対戦相手'] || '';
+  const { oisix, headToHead } = stats.standings || {};
+  const pitcherP  = players.find(p => p.pitcher);
+  const starterPs = players.filter(p => p.starter && !p.pitcher);
+
+  // 先発投手の成績
+  const pStat = pitcherP ? findStat(pitcherP.name, stats.pitching) : null;
+
+  // スタメン打者の成績（AB>=1で絞る）
+  const bStats = starterPs
+    .map(p => ({ p, s: findStat(p.name, stats.batting) }))
+    .filter(x => x.s && x.s.ab > 0);
+
+  // 日付からローテーション（0〜3）
+  const dateNum = gameInfo['日付'] ? new Date(gameInfo['日付'].replace(/\//g,'-')).getDate() : 0;
+  const mode = dateNum % 4;
+
+  // ── チーム成績テキスト（常時）──
+  let teamLine = '';
+  if (oisix) {
+    const rankStr = oisix.rank ? `東地区${oisix.rank}位` : '';
+    teamLine = `${rankStr ? rankStr + '・' : ''}${oisix.wins}勝${oisix.losses}敗${oisix.ties > 0 ? oisix.ties+'分' : ''}（勝率${oisix.pct}）`;
+  }
+
+  // ── 対戦成績 ──
+  const h2h = findH2H(opponent, headToHead);
+  const h2hLine = h2h && opponent ? `今季の${opponent}戦は${h2h}` : '';
+
+  // ── 先発投手テキスト ──
+  let pitcherLine = '';
+  if (pitcherP) {
+    if (pStat) {
+      const era  = pStat.era !== '-.--' ? `防御率<span class="highlights-stat">${pStat.era}</span>` : '';
+      const rec  = `${pStat.wins}勝${pStat.losses}敗`;
+      pitcherLine = `先発：${pitcherP.name}（${rec}${era ? ' ' + era : ''}）`;
+    } else {
+      pitcherLine = `先発：${pitcherP.name}`;
+    }
+  }
+
+  // ── 注目打者（モードで変更）──
+  let batterLine = '';
+  if (bStats.length > 0) {
+    // mode 0,2 → HR王、mode 1 → 打率、mode 3 → 打点
+    const sorted = {
+      0: [...bStats].sort((a,b) => b.s.hr  - a.s.hr),
+      1: [...bStats].filter(x => x.s.ab >= 20).sort((a,b) => parseFloat(b.s.avg) - parseFloat(a.s.avg)),
+      2: [...bStats].sort((a,b) => b.s.hr  - a.s.hr),
+      3: [...bStats].sort((a,b) => b.s.rbi - a.s.rbi),
+    };
+    const leaders = (sorted[mode] || sorted[0]).slice(0, 2);
+    const label   = [null,'打率','本塁打','打点'][mode] || '本塁打';
+
+    if (leaders.length > 0) {
+      const parts = leaders.map(({p, s}) => {
+        if (mode === 1) return `${p.name}（打率<span class="highlights-stat">${s.avg}</span>）`;
+        if (mode === 3) return `${p.name}（${s.rbi}打点）`;
+        return `${p.name}（${s.hr}本塁打）`;
+      });
+      batterLine = `注目：${parts.join('、')}`;
+    }
+  }
+
+  // ── タイトル（モードで変更） ──
+  const titles = [
+    ['🔥', '先発投手に注目'],
+    ['⚡', '打率上位陣に注目'],
+    ['⚔️', `今日の対戦：vs ${opponent || '相手チーム'}`],
+    ['📊', '打点リーダーに注目'],
+  ];
+  const [icon, titleText] = titles[mode] || titles[0];
+
+  // ── 本文組み立て ──
+  const lines = [teamLine, h2hLine, pitcherLine, batterLine].filter(Boolean);
+  const bodyHtml = lines.join('<br>');
+
+  return `
+    <div class="highlights-card">
+      <div class="highlights-eyebrow">TODAY'S HIGHLIGHTS</div>
+      <div class="highlights-title">${icon} ${titleText}</div>
+      <div class="highlights-body">${bodyHtml}</div>
+    </div>
+  `;
+}
+
 // ── チームカラー ─────────────────────────────────────────────
 const TEAM_COLORS = {
   '東北楽天ゴールデンイーグルス': '#CC0033',
@@ -635,7 +818,7 @@ function formatDate(str) {
 }
 
 // ── 試合カードHTML（共通） ────────────────────────────────────
-function gameCardHtml(gameInfo) {
+function gameCardHtml(gameInfo, players, stats) {
   const opponent  = gameInfo['対戦相手'] || '—';
   const teamColor = TEAM_COLORS[opponent] || '#0B2363';
   const gameDate  = gameInfo['日付'] ? formatDate(gameInfo['日付']) : '—';
@@ -643,6 +826,9 @@ function gameCardHtml(gameInfo) {
   const gameTime  = formatTime(gameInfo['試合開始'] || '');
   const venueRow  = venue    ? `<div class="game-meta-row"><span class="game-meta-icon">🏟️</span>${venue}</div>` : '';
   const timeRow   = gameTime ? `<div class="game-meta-row"><span class="game-meta-icon">⏰</span>${gameTime} 試合開始</div>` : '';
+  const highlightsHtml = (players && stats !== undefined)
+    ? buildHighlightsHtml(gameInfo, players, stats)
+    : '';
   return `
     <div class="game-card">
       <div class="game-card-title">TODAY'S GAME</div>
@@ -653,6 +839,7 @@ function gameCardHtml(gameInfo) {
         ${timeRow}
       </div>
     </div>
+    ${highlightsHtml}
   `;
 }
 
@@ -681,7 +868,7 @@ function renderWaiting() {
 }
 
 // ── 試合情報は表示 ＋ スタメン待機 ───────────────────────────
-function renderGameWithWaiting(gameInfo) {
+function renderGameWithWaiting(gameInfo, players, stats) {
   const rawTime = gameInfo['試合開始'] || '';
   const timeStr = formatTime(rawTime);
   let announceNote = '';
@@ -695,7 +882,7 @@ function renderGameWithWaiting(gameInfo) {
     announceNote = `<br><span style="color:#aaa;font-size:0.85em">${sh}:${sm} 頃発表予定</span>`;
   }
   document.getElementById('app').innerHTML = `
-    ${gameCardHtml(gameInfo)}
+    ${gameCardHtml(gameInfo, players, stats)}
     <div class="waiting-card" style="margin-top:16px">
       <div class="waiting-emoji">⏳</div>
       <div class="waiting-title">スタメン発表まであと少し！</div>
@@ -787,7 +974,7 @@ function buildManagerCard() {
 }
 
 // ── 描画 ─────────────────────────────────────────────────────
-function render(gameInfo, players) {
+function render(gameInfo, players, stats) {
   const starters = players.filter(p => p.starter && !p.pitcher);
   const pitcher  = players.find(p => p.pitcher);
   const bench    = players.filter(p => !p.starter);
@@ -826,7 +1013,7 @@ function render(gameInfo, players) {
   ` : '';
 
   document.getElementById('app').innerHTML = `
-    ${gameCardHtml(gameInfo)}
+    ${gameCardHtml(gameInfo, players, stats)}
 
     <div class="section">
       <div class="section-title">スターティングラインナップ</div>
@@ -840,9 +1027,13 @@ function render(gameInfo, players) {
 // ── メイン ───────────────────────────────────────────────────
 async function main() {
   try {
-    const res = await fetch(CSV_URL);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
+    // CSV と NPB成績を並行取得（stats は失敗してもページは動く）
+    const [csvRes, stats] = await Promise.all([
+      fetch(CSV_URL),
+      fetchNpbStats(),
+    ]);
+    if (!csvRes.ok) throw new Error(`HTTP ${csvRes.status}`);
+    const text = await csvRes.text();
     const rows = parseCSV(text);
     const { gameInfo, players } = parseData(rows);
 
@@ -850,14 +1041,11 @@ async function main() {
     const hasLineup = players.some(p => p.starter);
 
     if (!isToday(dateStr)) {
-      // 当日でない → 試合なし画面
       renderWaiting();
     } else if (!hasLineup || !isTimeToShowLineup(gameInfo['試合開始'])) {
-      // 当日だが、スタメン未入力 or 発表15分前未満 → 試合情報＋待機
-      renderGameWithWaiting(gameInfo);
+      renderGameWithWaiting(gameInfo, players, stats);
     } else {
-      // 当日 ＆ 発表時刻到達 → フル表示
-      render(gameInfo, players);
+      render(gameInfo, players, stats);
     }
   } catch (e) {
     document.getElementById('app').innerHTML = `

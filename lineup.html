@@ -254,7 +254,7 @@
 // ============================================================
 //  ★ 設定欄 ── スプレッドシートIDを確認してください ★
 // ============================================================
-const SHEET_ID  = '15bm0FJDSXohclI0mYlEQjAwMihqcg6hu48n-Zhp8nl4';
+const SHEET_ID  = '1N1fyTQcgAReuEJb3y__kc6JOsuH0TixFuujAlC5hQxU';
 const SHEET_GID = '0';   // 「入力」シートのgid（最初のシートは通常 0）
 // ============================================================
 
@@ -285,42 +285,48 @@ function parseCSV(text) {
 }
 
 // ── データ解析 ───────────────────────────────────────────────
-// スプレッドシート「入力」シートの想定レイアウト：
-//   Row 1:  日付, 対戦相手, 球場, 試合開始            ← ヘッダー行
-//   Row 2:  2026/06/22, 読売..., HARD OFF..., 13:00  ← 値（dropdown/入力）
-//   Row 3:  （空行）
-//   Row 4:  打順, 背番号, 選手名, 守備位置, スタメン, TalentBookURL  ← ヘッダー行
-//   Row 5+: 1, 3, =VLOOKUP(...), 三塁, TRUE, =VLOOKUP(...)
+// スプレッドシート「入力」シートの実際のレイアウト：
+//   Row 1:  日付      | (空) | 2026年6月20日
+//   Row 2:  対戦相手  | 東北楽天ゴールデンイーグルス
+//   Row 3:  球場      | (空) | HARD OFF ECOスタジアム新潟
+//   Row 4:  試合開始  | (空) | (空) | 16:00
+//   Row 5:  (空行)
+//   Row 6:  打順 | 守備 | 背番号 | 選手名 | talentbook URL  ← ヘッダー
+//   Row 7+: 1  | CF | 24 | 上原 裕樹 | https://...
+//   ...     P  | 投手| 45 | 高野 結羽 | https://...  ← 先発外
 function parseData(rows) {
-  // Row 0: 試合情報ヘッダー / Row 1: 試合情報値
-  const gameHeaders = rows[0] || [];
-  const gameValues  = rows[1] || [];
-  const gameInfo = {};
-  gameHeaders.forEach((h, i) => { if (h) gameInfo[h] = gameValues[i] || ''; });
-
-  // 空行を探してスタメンデータの開始行を特定
-  let lineupStart = -1;
-  for (let i = 2; i < rows.length; i++) {
-    if (rows[i].every(c => !c)) {
-      lineupStart = i + 2; // 空行の次がヘッダー行 → さらに次がデータ行
-      break;
-    }
+  // 「打順」ヘッダー行を探す
+  let lineupHeaderRow = -1;
+  for (let i = 0; i < rows.length; i++) {
+    if ((rows[i][0] || '').trim() === '打順') { lineupHeaderRow = i; break; }
   }
 
+  // 試合情報：ヘッダー行より前の行を key-value で読む
+  // 値は A列以降で最初に空でないセルを使う
+  const gameInfo = {};
+  for (let i = 0; i < (lineupHeaderRow < 0 ? rows.length : lineupHeaderRow); i++) {
+    const row = rows[i];
+    const key = (row[0] || '').trim();
+    if (!key) continue;
+    const value = row.slice(1).map(c => c.trim()).find(c => c) || '';
+    gameInfo[key] = value;
+  }
+
+  // 選手データ
   const players = [];
-  if (lineupStart > 0) {
-    for (let i = lineupStart; i < rows.length; i++) {
+  if (lineupHeaderRow >= 0) {
+    for (let i = lineupHeaderRow + 1; i < rows.length; i++) {
       const row = rows[i];
-      const name = (row[2] || '').trim();
-      // 空行・VLOOKUPエラー行（#N/A等）はスキップ
+      const order  = (row[0] || '').trim();
+      const name   = (row[3] || '').trim();
       if (!name || name.startsWith('#')) continue;
       players.push({
-        order:   row[0] || '',
-        number:  row[1] || '',
+        order:   order,
+        pos:     (row[1] || '').trim(),
+        number:  (row[2] || '').trim(),
         name:    name,
-        pos:     row[3] || '',
-        starter: (row[4] || '').toUpperCase() === 'TRUE',
-        tbUrl:   (row[5] || '').startsWith('http') ? row[5] : ''
+        starter: /^\d+$/.test(order), // 打順が数字 → スタメン
+        tbUrl:   (row[4] || '').trim().startsWith('http') ? (row[4] || '').trim() : ''
       });
     }
   }

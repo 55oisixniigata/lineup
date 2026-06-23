@@ -77,7 +77,31 @@
     .game-meta-vs {
       font-size: 18px;
       font-weight: 800;
+    }
+
+    /* ── 待機画面 ── */
+    .waiting-card {
+      background: white;
+      margin: 16px;
+      border-radius: 16px;
+      padding: 40px 24px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .waiting-emoji {
+      font-size: 52px;
+      margin-bottom: 16px;
+    }
+    .waiting-title {
+      font-size: 18px;
+      font-weight: 800;
       color: #0B2363;
+      margin-bottom: 10px;
+    }
+    .waiting-sub {
+      font-size: 14px;
+      color: #888;
+      line-height: 1.7;
     }
 
     /* ── セクション ── */
@@ -105,6 +129,10 @@
       align-items: center;
       gap: 12px;
     }
+    .player-card.is-pitcher {
+      border-top: 2px dashed #E8A800;
+      margin-top: 4px;
+    }
     .player-order {
       font-size: 22px;
       font-weight: 900;
@@ -113,6 +141,12 @@
       text-align: center;
       flex-shrink: 0;
       line-height: 1;
+    }
+    .player-order.pitcher-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #aaa;
+      letter-spacing: 0;
     }
     .player-position-badge {
       background: #0B2363;
@@ -173,7 +207,7 @@
     .bench-position {
       font-size: 11px;
       color: #666;
-      width: 28px;
+      width: 32px;
       flex-shrink: 0;
     }
     .bench-name {
@@ -226,7 +260,6 @@
       color: #c00;
       line-height: 1.6;
     }
-    .error-msg a { color: #0B2363; }
   </style>
 </head>
 <body>
@@ -251,10 +284,23 @@
 </div>
 
 <script>
-// ============================================================
-//  ★ 公開URL（ファイル→共有→ウェブに公開 で発行されたURL）★
-// ============================================================
 const CSV_URL = 'https://script.google.com/macros/s/AKfycbwMkya55qhQHBNBxsanR9JuKTjCQ3C6avHqE0YqRh0-jCZcFBTsrwuldi3zV5YT_R7e/exec';
+
+// ── チームカラー ─────────────────────────────────────────────
+const TEAM_COLORS = {
+  '東北楽天ゴールデンイーグルス': '#CC0033',
+  '読売ジャイアンツ':             '#F47920',
+  '東京ヤクルトスワローズ':       '#007B40',
+  '横浜DeNAベイスターズ':        '#004B98',
+  '埼玉西武ライオンズ':           '#00358C',
+  '北海道日本ハムファイターズ':   '#E60012',
+  'オリックス・バファローズ':     '#1A2F6B',
+  '千葉ロッテマリーンズ':         '#002B56',
+  '福岡ソフトバンクホークス':     '#F7B027',
+  '中日ドラゴンズ':               '#003595',
+  '阪神タイガース':               '#FFE000',
+  '広島東洋カープ':               '#E40012',
+};
 
 // ── CSV パーサー ────────────────────────────────────────────
 function parseCSV(text) {
@@ -281,24 +327,12 @@ function parseCSV(text) {
 }
 
 // ── データ解析 ───────────────────────────────────────────────
-// スプレッドシート「入力」シートの実際のレイアウト：
-//   Row 1:  日付      | (空) | 2026年6月20日
-//   Row 2:  対戦相手  | 東北楽天ゴールデンイーグルス
-//   Row 3:  球場      | (空) | HARD OFF ECOスタジアム新潟
-//   Row 4:  試合開始  | (空) | (空) | 16:00
-//   Row 5:  (空行)
-//   Row 6:  打順 | 守備 | 背番号 | 選手名 | talentbook URL  ← ヘッダー
-//   Row 7+: 1  | CF | 24 | 上原 裕樹 | https://...
-//   ...     P  | 投手| 45 | 高野 結羽 | https://...  ← 先発外
 function parseData(rows) {
-  // 「打順」ヘッダー行を探す
   let lineupHeaderRow = -1;
   for (let i = 0; i < rows.length; i++) {
     if ((rows[i][0] || '').trim() === '打順') { lineupHeaderRow = i; break; }
   }
 
-  // 試合情報：ヘッダー行より前の行を key-value で読む
-  // 値は A列以降で最初に空でないセルを使う
   const gameInfo = {};
   for (let i = 0; i < (lineupHeaderRow < 0 ? rows.length : lineupHeaderRow); i++) {
     const row = rows[i];
@@ -308,20 +342,20 @@ function parseData(rows) {
     gameInfo[key] = value;
   }
 
-  // 選手データ
   const players = [];
   if (lineupHeaderRow >= 0) {
     for (let i = lineupHeaderRow + 1; i < rows.length; i++) {
       const row = rows[i];
-      const order  = (row[0] || '').trim();
-      const name   = (row[3] || '').trim();
+      const order = (row[0] || '').trim();
+      const name  = (row[3] || '').trim();
       if (!name || name.startsWith('#')) continue;
       players.push({
-        order:   order,
+        order,
         pos:     (row[1] || '').trim(),
         number:  (row[2] || '').trim(),
-        name:    name,
-        starter: /^\d+$/.test(order), // 打順が数字 → スタメン
+        name,
+        starter: /^\d+$/.test(order) || order === 'P',
+        pitcher: order === 'P',
         tbUrl:   (row[4] || '').trim().startsWith('http') ? (row[4] || '').trim() : ''
       });
     }
@@ -330,17 +364,70 @@ function parseData(rows) {
   return { gameInfo, players };
 }
 
+// ── 今日かどうか判定 ─────────────────────────────────────────
+function isToday(dateStr) {
+  if (!dateStr) return false;
+  const today = new Date();
+  // "2026年6月20日（土）" 形式
+  const m = dateStr.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
+  if (m) {
+    return parseInt(m[1]) === today.getFullYear() &&
+           parseInt(m[2]) === today.getMonth() + 1 &&
+           parseInt(m[3]) === today.getDate();
+  }
+  // Apps Scriptが日付オブジェクトを文字列化した場合
+  const d = new Date(dateStr);
+  if (!isNaN(d)) {
+    return d.getFullYear() === today.getFullYear() &&
+           d.getMonth()    === today.getMonth() &&
+           d.getDate()     === today.getDate();
+  }
+  return false;
+}
+
+// ── 時刻フォーマット ─────────────────────────────────────────
+function formatTime(val) {
+  if (!val) return '';
+  // すでに "16:00" 形式
+  if (/^\d{1,2}:\d{2}$/.test(val)) return val;
+  // Apps Script が Date オブジェクトを文字列化した場合（"Sat Dec 30 1899 16:00:00..."）
+  const d = new Date(val);
+  if (!isNaN(d)) {
+    return `${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;
+  }
+  // Sheetsの内部表現（小数: 0.666... = 16:00）
+  const num = parseFloat(val);
+  if (!isNaN(num) && num > 0 && num < 1) {
+    const totalMin = Math.round(num * 24 * 60);
+    return `${Math.floor(totalMin / 60)}:${(totalMin % 60).toString().padStart(2, '0')}`;
+  }
+  return val;
+}
+
 // ── 日付フォーマット ─────────────────────────────────────────
 function formatDate(str) {
+  if (/\d{4}年\d{1,2}月\d{1,2}日/.test(str)) return str;
   const d = new Date(str.replace(/\//g, '-'));
   if (isNaN(d)) return str;
   const days = ['日','月','火','水','木','金','土'];
   return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
 }
 
+// ── 待機画面 ─────────────────────────────────────────────────
+function renderWaiting() {
+  document.getElementById('app').innerHTML = `
+    <div class="waiting-card">
+      <div class="waiting-emoji">⚾</div>
+      <div class="waiting-title">スタメン発表まであと少し！</div>
+      <div class="waiting-sub">楽しみに待っててね！<br>発表されたらこのページを更新してみてください。</div>
+    </div>
+  `;
+}
+
 // ── 描画 ─────────────────────────────────────────────────────
 function render(gameInfo, players) {
-  const starters = players.filter(p => p.starter);
+  const starters = players.filter(p => p.starter && !p.pitcher);
+  const pitcher  = players.find(p => p.pitcher);
   const bench    = players.filter(p => !p.starter);
 
   const tbLink = (p) => p.tbUrl
@@ -359,6 +446,18 @@ function render(gameInfo, players) {
     </div>
   `).join('');
 
+  const pitcherCard = pitcher ? `
+    <div class="player-card is-pitcher">
+      <div class="player-order pitcher-label">投手</div>
+      <div class="player-position-badge">${pitcher.pos}</div>
+      <div class="player-info">
+        <div class="player-name">${pitcher.name}</div>
+        ${pitcher.number ? `<div class="player-number">#${pitcher.number}</div>` : ''}
+      </div>
+      ${tbLink(pitcher)}
+    </div>
+  ` : '';
+
   const benchCards = bench.map(p => `
     <div class="bench-card">
       <div class="bench-dot"></div>
@@ -368,13 +467,14 @@ function render(gameInfo, players) {
     </div>
   `).join('');
 
-  const gameDate    = gameInfo['日付']     ? formatDate(gameInfo['日付'])   : '—';
-  const opponent    = gameInfo['対戦相手'] || '—';
-  const venue       = gameInfo['球場']     || '';
-  const gameTime    = gameInfo['試合開始'] || '';
+  const opponent  = gameInfo['対戦相手'] || '—';
+  const teamColor = TEAM_COLORS[opponent] || '#0B2363';
+  const gameDate  = gameInfo['日付']      ? formatDate(gameInfo['日付']) : '—';
+  const venue     = gameInfo['球場']      || '';
+  const gameTime  = formatTime(gameInfo['試合開始'] || '');
 
-  const venueRow  = venue    ? `<div class="game-meta-row"><span class="game-meta-icon">🏟️</span>${venue}</div>` : '';
-  const timeRow   = gameTime ? `<div class="game-meta-row"><span class="game-meta-icon">⏰</span>${gameTime} 試合開始</div>` : '';
+  const venueRow = venue    ? `<div class="game-meta-row"><span class="game-meta-icon">🏟️</span>${venue}</div>` : '';
+  const timeRow  = gameTime ? `<div class="game-meta-row"><span class="game-meta-icon">⏰</span>${gameTime} 試合開始</div>` : '';
   const benchSection = bench.length ? `
     <div class="section">
       <div class="section-title">その他の出場選手</div>
@@ -387,7 +487,7 @@ function render(gameInfo, players) {
       <div class="game-card-title">TODAY'S GAME</div>
       <div class="game-meta">
         <div class="game-meta-row"><span class="game-meta-icon">📅</span>${gameDate}</div>
-        <div class="game-meta-row"><span class="game-meta-icon">⚾</span><span class="game-meta-vs">VS ${opponent}</span></div>
+        <div class="game-meta-row"><span class="game-meta-icon">⚾</span><span class="game-meta-vs" style="color:${teamColor}">VS ${opponent}</span></div>
         ${venueRow}
         ${timeRow}
       </div>
@@ -395,7 +495,7 @@ function render(gameInfo, players) {
 
     <div class="section">
       <div class="section-title">スターティングラインナップ</div>
-      ${starters.length ? starterCards : '<div class="status-msg">スタメンデータがありません</div>'}
+      ${starterCards}${pitcherCard}
     </div>
 
     ${benchSection}
@@ -410,13 +510,19 @@ async function main() {
     const text = await res.text();
     const rows = parseCSV(text);
     const { gameInfo, players } = parseData(rows);
-    render(gameInfo, players);
+
+    const dateStr   = gameInfo['日付'] || '';
+    const hasLineup = players.some(p => p.starter);
+
+    if (!isToday(dateStr) || !hasLineup) {
+      renderWaiting();
+    } else {
+      render(gameInfo, players);
+    }
   } catch (e) {
     document.getElementById('app').innerHTML = `
       <div class="error-msg">
         ❌ データを読み込めませんでした。<br><br>
-        スプレッドシートが <strong>「ウェブに公開」</strong> されているか確認してください。<br>
-        <small>（ファイル → 共有 → ウェブに公開 → CSVで公開）</small><br><br>
         <small style="color:#aaa">エラー詳細: ${e.message}</small>
       </div>
     `;

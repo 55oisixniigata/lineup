@@ -300,6 +300,22 @@
 <script>
 const CSV_URL = 'https://script.google.com/macros/s/AKfycbwMkya55qhQHBNBxsanR9JuKTjCQ3C6avHqE0YqRh0-jCZcFBTsrwuldi3zV5YT_R7e/exec';
 
+// ── 守備位置番号マップ（数字 → 表示名）──────────────────────
+// スプシのB列に番号を入力した場合に変換。テキストのまま入力しても動く
+const POSITION_MAP = {
+  '1': 'ピッチャー', '2': 'キャッチャー', '3': 'ファースト',
+  '4': 'セカンド',  '5': 'サード',       '6': 'ショート',
+  '7': 'レフト',   '8': 'センター',     '9': 'ライト',
+  'DH': 'DH',
+};
+function posName(val) {
+  if (!val) return '';
+  // 数字のみ（例："4"）→ マップで変換
+  if (POSITION_MAP[val]) return POSITION_MAP[val];
+  // 先頭に数字がついている場合（例："4 セカンド"）→ 数字を除去
+  return val.replace(/^\d+\s*/, '') || val;
+}
+
 // ── 選手写真マップ（背番号 → Google Drive ファイルID）────────
 // ★ 新しい写真を追加するときは Drive のファイルIDをここに追加する
 const PHOTO_MAP = {
@@ -400,7 +416,7 @@ function parseData(rows) {
       if (!name || name.startsWith('#')) continue;
       players.push({
         order,
-        pos:     (row[1] || '').trim(),
+        pos:     posName((row[1] || '').trim()),
         number:  (row[2] || '').trim(),
         name,
         starter: /^\d+$/.test(order) || order === 'P',
@@ -481,7 +497,7 @@ function buildPlayerCard(p, orderLabel, isPitcher) {
     : `<div class="player-photo-placeholder">${initial}</div>`;
 
   const tbHtml = p.tbUrl
-    ? `<a class="tb-btn" href="${p.tbUrl}" target="_blank" rel="noopener">プロフィール ›</a>`
+    ? `<a class="tb-btn" href="${p.tbUrl}" target="_blank" rel="noopener">選手インタビュー ›</a>`
     : '';
 
   const bioHtml = bio ? `<div class="player-bio">${bio}</div>` : '';
@@ -496,7 +512,7 @@ function buildPlayerCard(p, orderLabel, isPitcher) {
         <div class="player-name">${p.name}</div>
         <div class="player-meta">
           <span class="player-position-badge">${p.pos}</span>
-          ${p.number ? `<span class="player-number">#${p.number}</span>` : ''}
+          ${p.number ? `<span class="player-number">背番号 ${p.number}</span>` : ''}
         </div>
         ${bioHtml}
         ${tbHtml}
@@ -521,13 +537,13 @@ function render(gameInfo, players) {
 
   const benchCards = bench.map(p => {
     const tbHtml = p.tbUrl
-      ? `<a class="tb-btn" href="${p.tbUrl}" target="_blank" rel="noopener">プロフィール ›</a>`
+      ? `<a class="tb-btn" href="${p.tbUrl}" target="_blank" rel="noopener">選手インタビュー ›</a>`
       : '';
     return `
       <div class="bench-card">
         <div class="bench-dot"></div>
         <div class="bench-position">${p.pos}</div>
-        <div class="bench-name">${p.name}${p.number ? `<span class="bench-number"> #${p.number}</span>` : ''}</div>
+        <div class="bench-name">${p.name}${p.number ? `<span class="bench-number"> 背番号${p.number}</span>` : ''}</div>
         ${tbHtml}
       </div>
     `;

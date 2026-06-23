@@ -269,6 +269,23 @@
       align-self: flex-start;
     }
     .tb-btn:hover { opacity: 0.85; }
+    .profile-btn {
+      display: inline-block;
+      margin-top: 6px;
+      margin-left: 5px;
+      background: transparent;
+      color: #015095;
+      text-decoration: none;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 5px;
+      border: 1.5px solid #015095;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+      align-self: flex-start;
+    }
+    .profile-btn:hover { background: #015095; color: white; }
 
     /* ── その他出場選手 ── */
     .bench-card {
@@ -389,6 +406,58 @@ const BIO_MAP = {
   '61527': 'チームを泥臭く引っ張る、4年目のキャプテン内野手。「突進三銃士」の俊足で塁をかき乱し、今季こそNPBの夢を掴む。',
   '61770': '楽天1年目に22試合連続無失点のNPBタイ記録を持つ193cm右腕。最速153kmで先発転向し、NPB復帰をめざす。',
 };
+const PROFILE_MAP = {
+  '0':  'https://www.niigata-albirex-bc.jp/team/player/yoshihiro-taka/',
+  '1':  'https://www.niigata-albirex-bc.jp/team/player/yang-daikang/',
+  '3':  'https://www.niigata-albirex-bc.jp/team/player/shunta-tanaka/',
+  '4':  'https://www.niigata-albirex-bc.jp/team/player/genta-urushihara/',
+  '5':  'https://www.niigata-albirex-bc.jp/team/player/yodai-ohkawa/',
+  '7':  'https://www.niigata-albirex-bc.jp/team/player/keita-sonobe/',
+  '9':  'https://www.niigata-albirex-bc.jp/team/player/shun-takayama/',
+  '11': 'https://www.niigata-albirex-bc.jp/team/player/tomoki-uemura/',
+  '12': 'https://www.niigata-albirex-bc.jp/team/player/sora-yamada/',
+  '15': 'https://www.niigata-albirex-bc.jp/team/player/riku-nishimura/',
+  '17': 'https://www.niigata-albirex-bc.jp/team/player/satoshi-miyamori/',
+  '19': 'https://www.niigata-albirex-bc.jp/team/player/katsuki-matayoshi/',
+  '20': 'https://www.niigata-albirex-bc.jp/team/player/kazutomo-iguchi/',
+  '23': 'https://www.niigata-albirex-bc.jp/team/player/ryo-watanabe/',
+  '24': 'https://www.niigata-albirex-bc.jp/team/player/hiroki-uehara/',
+  '25': 'https://www.niigata-albirex-bc.jp/team/player/keiji-konishi/',
+  '26': 'https://www.niigata-albirex-bc.jp/team/player/taiga-yamada/',
+  '27': 'https://www.niigata-albirex-bc.jp/team/player/kenji-pallares/',
+  '28': 'https://www.niigata-albirex-bc.jp/team/player/ryota-imai/',
+  '29': 'https://www.niigata-albirex-bc.jp/team/player/shu-namba/',
+  '30': 'https://www.niigata-albirex-bc.jp/team/player/ryouma-ishida/',
+  '32': 'https://www.niigata-albirex-bc.jp/team/player/shuya-kozono/',
+  '33': 'https://www.niigata-albirex-bc.jp/team/player/tamon-banzai/',
+  '34': 'https://www.niigata-albirex-bc.jp/team/player/kaito-irei/',
+  '35': 'https://www.niigata-albirex-bc.jp/team/player/hideaki-nakazawa/',
+  '36': 'https://www.niigata-albirex-bc.jp/team/player/daniel-frey/',
+  '37': 'https://www.niigata-albirex-bc.jp/team/player/shota-nakayama/',
+  '39': 'https://www.niigata-albirex-bc.jp/team/player/chika-tasai/',
+  '41': 'https://www.niigata-albirex-bc.jp/team/player/hayato-suzuki/',
+  '42': 'https://www.niigata-albirex-bc.jp/team/player/adam-walker/',
+  '43': 'https://www.niigata-albirex-bc.jp/team/player/kenta-ajiro/',
+  '44': 'https://www.niigata-albirex-bc.jp/team/player/tenyu-higa/',
+  '45': 'https://www.niigata-albirex-bc.jp/team/player/yu-takano/',
+  '46': 'https://www.niigata-albirex-bc.jp/team/player/shunga-takahashi/',
+  '47': 'https://www.niigata-albirex-bc.jp/team/player/shotaro-kasahara/',
+  '48': 'https://www.niigata-albirex-bc.jp/team/player/kazuma-yamashita/',
+  '50': 'https://www.niigata-albirex-bc.jp/team/player/yoshiki-ishiyama/',
+  '51': 'https://www.niigata-albirex-bc.jp/team/player/naoya-ishikawa/',
+  '52': 'https://www.niigata-albirex-bc.jp/team/player/kazuhiro-kishikawa/',
+  '53': 'https://www.niigata-albirex-bc.jp/team/player/sora-inaba/',
+  '54': 'https://www.niigata-albirex-bc.jp/team/player/ryo-hosoya/',
+  '55': 'https://www.niigata-albirex-bc.jp/team/player/reo-asai/',
+  '56': 'https://www.niigata-albirex-bc.jp/team/player/taizo-korenaga/',
+  '60': 'https://www.niigata-albirex-bc.jp/team/player/daisuke-ono/',
+  '62': 'https://www.niigata-albirex-bc.jp/team/player/tarou-kusuda/',
+  '73': 'https://www.niigata-albirex-bc.jp/team/player/hiroki-inaba/',
+};
+function profileUrl(number) {
+  return number ? (PROFILE_MAP[String(number)] || '') : '';
+}
+
 function bioText(tbUrl) {
   if (!tbUrl) return '';
   const m = tbUrl.match(/\/stories\/(\d+)/);
@@ -603,6 +672,11 @@ function buildPlayerCard(p, orderLabel, isPitcher) {
     ? `<a class="tb-btn" href="${p.tbUrl}" target="_blank" rel="noopener">選手インタビュー ›</a>`
     : '';
 
+  const pUrl = profileUrl(p.number);
+  const profileHtml = pUrl
+    ? `<a class="profile-btn" href="${pUrl}" target="_blank" rel="noopener">公式プロフィール ›</a>`
+    : '';
+
   const bioHtml = bio ? `<div class="player-bio">${bio}</div>` : '';
 
   return `
@@ -618,7 +692,7 @@ function buildPlayerCard(p, orderLabel, isPitcher) {
           ${p.number ? `<span class="player-number">背番号 ${p.number}</span>` : ''}
         </div>
         ${bioHtml}
-        ${tbHtml}
+        ${tbHtml}${profileHtml}
       </div>
     </div>
   `;
@@ -642,12 +716,16 @@ function render(gameInfo, players) {
     const tbHtml = p.tbUrl
       ? `<a class="tb-btn" href="${p.tbUrl}" target="_blank" rel="noopener">選手インタビュー ›</a>`
       : '';
+    const pUrl = profileUrl(p.number);
+    const profileHtml = pUrl
+      ? `<a class="profile-btn" href="${pUrl}" target="_blank" rel="noopener">公式プロフィール ›</a>`
+      : '';
     return `
       <div class="bench-card">
         <div class="bench-dot"></div>
         <div class="bench-position">${p.pos}</div>
         <div class="bench-name">${p.name}${p.number ? `<span class="bench-number"> 背番号${p.number}</span>` : ''}</div>
-        ${tbHtml}
+        ${tbHtml}${profileHtml}
       </div>
     `;
   }).join('');

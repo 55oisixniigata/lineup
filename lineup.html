@@ -252,13 +252,9 @@
 
 <script>
 // ============================================================
-//  ★ 設定欄 ── スプレッドシートIDを確認してください ★
+//  ★ 公開URL（ファイル→共有→ウェブに公開 で発行されたURL）★
 // ============================================================
-const SHEET_ID  = '1N1fyTQcgAReuEJb3y__kc6JOsuH0TixFuujAlC5hQxU';
-const SHEET_GID = '0';   // 「入力」シートのgid（最初のシートは通常 0）
-// ============================================================
-
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/pub?gid=${SHEET_GID}&single=true&output=csv`;
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQscpEA1hMJxTIlVnIrwLmQ_oUX2SiLCu8IxGdluk8aaV9MLdHiy8CTq9KWa6eOlI2AO033IBslxs3R/pub?gid=0&single=true&output=csv';
 
 // ── CSV パーサー ────────────────────────────────────────────
 function parseCSV(text) {

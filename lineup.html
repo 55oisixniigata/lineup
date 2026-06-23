@@ -698,23 +698,41 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     }
   }
 
-  // ── タイトル（モードで変更） ──
-  const titles = [
-    ['🔥', '先発投手に注目'],
-    ['⚡', '打率上位陣に注目'],
-    ['⚔️', `今日の対戦：vs ${opponent || '相手チーム'}`],
-    ['📊', '打点リーダーに注目'],
-  ];
-  const [icon, titleText] = titles[mode] || titles[0];
+  // ── 文章として組み立て ──
+  const sentences = [];
 
-  // ── 本文組み立て ──
-  const lines = [teamLine, recentLine, h2hLine, pitcherLine, batterLine].filter(Boolean);
-  const bodyHtml = lines.join('<br>');
+  // チーム成績 + 今月成績を1文に
+  if (teamLine && recentLine) {
+    sentences.push(`現在${teamLine}。${recentLine}。`);
+  } else if (teamLine) {
+    sentences.push(`現在${teamLine}。`);
+  }
+
+  // 対戦成績
+  if (h2hLine) {
+    sentences.push(`${h2hLine}。`);
+  }
+
+  // 先発投手 + 注目打者を1文に
+  if (pitcherLine && batterLine) {
+    // pitcherLine の「先発：」を文章に変換
+    const pitcherText = pitcherLine.replace('先発：', '先発は');
+    // batterLine の「注目：」を変換
+    const batterText = batterLine.replace('注目：', '').replace('、', 'と');
+    sentences.push(`${pitcherText}が登板。${batterText}の活躍に注目したい。`);
+  } else if (pitcherLine) {
+    const pitcherText = pitcherLine.replace('先発：', '先発は');
+    sentences.push(`${pitcherText}が登板。`);
+  } else if (batterLine) {
+    const batterText = batterLine.replace('注目：', '').replace('、', 'と');
+    sentences.push(`${batterText}の活躍に注目したい。`);
+  }
+
+  const bodyHtml = sentences.join('');
 
   return `
     <div class="highlights-card">
       <div class="highlights-eyebrow">TODAY'S HIGHLIGHTS</div>
-      <div class="highlights-title">${icon} ${titleText}</div>
       <div class="highlights-body">${bodyHtml}</div>
     </div>
   `;

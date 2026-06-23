@@ -122,31 +122,57 @@
     .player-card {
       background: white;
       border-radius: 10px;
-      padding: 13px 14px;
+      padding: 10px 14px;
       margin-bottom: 8px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.07);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
     .player-card.is-pitcher {
       border-top: 2px dashed #E8A800;
       margin-top: 4px;
     }
     .player-order {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 900;
       color: #E8A800;
-      width: 28px;
+      width: 24px;
       text-align: center;
       flex-shrink: 0;
       line-height: 1;
     }
     .player-order.pitcher-label {
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
       color: #aaa;
       letter-spacing: 0;
+    }
+    /* ── 選手写真 ── */
+    .player-photo {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: top center;
+      flex-shrink: 0;
+      background: #E8E8E8;
+      border: 2px solid #E8A800;
+    }
+    .player-photo-placeholder {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background: #E0E4F0;
+      border: 2px solid #C8CEDF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: #0B2363;
+      opacity: 0.5;
     }
     .player-position-badge {
       background: #0B2363;
@@ -160,11 +186,15 @@
     }
     .player-info {
       flex: 1;
+      min-width: 0;
     }
     .player-name {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       letter-spacing: 0.03em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .player-number {
       font-size: 11px;
@@ -285,6 +315,24 @@
 
 <script>
 const CSV_URL = 'https://script.google.com/macros/s/AKfycbwMkya55qhQHBNBxsanR9JuKTjCQ3C6avHqE0YqRh0-jCZcFBTsrwuldi3zV5YT_R7e/exec';
+
+// ── 選手写真マップ（背番号 → Google Drive ファイルID）────────
+// ★ 新しい写真を追加するときは Drive のファイルIDをここに追加する
+const PHOTO_MAP = {
+  '0':  '1flJHozvw79fyoHOe3N0rIEsIkvmYadhc', // 高野
+  '5':  '1V4r9oGFCkIJPRsslVTSGhK9_9yh0wa0l', // 大川
+  '7':  '1-7wLRb9MtIUyYVU0y7wqMf15xPxu7GB0', // 園部
+  '9':  '1Bd_2jlg5FubSwPD-hYzoNvnJ2OdPh4pI', // 髙山
+  '24': '1V1wbdLvq93QOBBWzVo7WYuRU3Nk3zT8m', // 上原
+  '25': '1JTHEGz7Npi3ajGq7guW4R60AN0C3utAa', // 小西
+  '35': '1SwxuNNSbnfKP6cgxEC7KFFS-zj3VXZcd', // 中澤
+  '42': '18sUJX7pnbLJUiEMpqmlnu1fvM1D-HZtc', // ウォーカー
+  '62': '13VTowH_4TUIZwDNAvMaONmhk2vfHgZnO', // 楠田
+};
+function photoUrl(number) {
+  const id = PHOTO_MAP[String(number)];
+  return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w200` : null;
+}
 
 // ── チームカラー ─────────────────────────────────────────────
 const TEAM_COLORS = {
@@ -434,13 +482,25 @@ function render(gameInfo, players) {
     ? `<a class="tb-btn" href="${p.tbUrl}" target="_blank" rel="noopener">プロフィール ›</a>`
     : '';
 
+  const photoEl = (p) => {
+    const url = photoUrl(p.number);
+    const initial = p.name.trim().slice(0, 1);
+    return url
+      ? `<img class="player-photo" src="${url}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+        + `<div class="player-photo-placeholder" style="display:none">${initial}</div>`
+      : `<div class="player-photo-placeholder">${initial}</div>`;
+  };
+
   const starterCards = starters.map(p => `
     <div class="player-card">
       <div class="player-order">${p.order}</div>
-      <div class="player-position-badge">${p.pos}</div>
+      ${photoEl(p)}
       <div class="player-info">
         <div class="player-name">${p.name}</div>
-        ${p.number ? `<div class="player-number">#${p.number}</div>` : ''}
+        <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
+          <div class="player-position-badge">${p.pos}</div>
+          ${p.number ? `<span class="player-number">#${p.number}</span>` : ''}
+        </div>
       </div>
       ${tbLink(p)}
     </div>
@@ -449,10 +509,13 @@ function render(gameInfo, players) {
   const pitcherCard = pitcher ? `
     <div class="player-card is-pitcher">
       <div class="player-order pitcher-label">投手</div>
-      <div class="player-position-badge">${pitcher.pos}</div>
+      ${photoEl(pitcher)}
       <div class="player-info">
         <div class="player-name">${pitcher.name}</div>
-        ${pitcher.number ? `<div class="player-number">#${pitcher.number}</div>` : ''}
+        <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
+          <div class="player-position-badge">${pitcher.pos}</div>
+          ${pitcher.number ? `<span class="player-number">#${pitcher.number}</span>` : ''}
+        </div>
       </div>
       ${tbLink(pitcher)}
     </div>

@@ -404,17 +404,6 @@ function render(gameInfo, players) {
 
 // ── メイン ───────────────────────────────────────────────────
 async function main() {
-  if (SHEET_ID === 'YOUR_GOOGLE_SHEET_ID') {
-    document.getElementById('app').innerHTML = `
-      <div class="error-msg">
-        ⚙️ <strong>初期設定が必要です</strong><br><br>
-        このHTMLファイルの <code>SHEET_ID</code> にGoogleスプレッドシートのIDを設定してください。<br>
-        詳しくは <code>docs/lineup_setup.md</code> を参照してください。
-      </div>
-    `;
-    return;
-  }
-
   try {
     const res = await fetch(CSV_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

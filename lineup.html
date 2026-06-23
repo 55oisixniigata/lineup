@@ -88,26 +88,12 @@
       text-align: center;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
-    .waiting-emoji {
-      font-size: 52px;
-      margin-bottom: 16px;
-    }
-    .waiting-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #0B2363;
-      margin-bottom: 10px;
-    }
-    .waiting-sub {
-      font-size: 14px;
-      color: #888;
-      line-height: 1.7;
-    }
+    .waiting-emoji { font-size: 52px; margin-bottom: 16px; }
+    .waiting-title { font-size: 18px; font-weight: 800; color: #0B2363; margin-bottom: 10px; }
+    .waiting-sub   { font-size: 14px; color: #888; line-height: 1.7; }
 
     /* ── セクション ── */
-    .section {
-      margin: 16px 16px 0;
-    }
+    .section { margin: 16px 16px 0; }
     .section-title {
       font-size: 12px;
       font-weight: 700;
@@ -118,101 +104,130 @@
       margin-bottom: 10px;
     }
 
-    /* ── スタメンカード ── */
+    /* ── Case B スタメンカード ── */
     .player-card {
       background: white;
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-bottom: 8px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.09);
+      overflow: hidden;
       display: flex;
-      align-items: center;
-      gap: 10px;
+      align-items: stretch;
+      min-height: 108px;
     }
     .player-card.is-pitcher {
-      border-top: 2px dashed #E8A800;
-      margin-top: 4px;
+      border: 2px dashed #E8A800;
+      margin-top: 6px;
     }
-    .player-order {
-      font-size: 20px;
-      font-weight: 900;
-      color: #E8A800;
-      width: 24px;
-      text-align: center;
+
+    /* 背番号バンド */
+    .player-num-band {
+      background: #0B2363;
+      width: 34px;
       flex-shrink: 0;
-      line-height: 1;
-    }
-    .player-order.pitcher-label {
-      font-size: 11px;
-      font-weight: 700;
-      color: #aaa;
-      letter-spacing: 0;
-    }
-    /* ── 選手写真 ── */
-    .player-photo {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      object-fit: cover;
-      object-position: top center;
-      flex-shrink: 0;
-      background: #E8E8E8;
-      border: 2px solid #E8A800;
-    }
-    .player-photo-placeholder {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      background: #E0E4F0;
-      border: 2px solid #C8CEDF;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      padding: 8px 0;
+    }
+    .player-card.is-pitcher .player-num-band {
+      background: #4a3a00;
+    }
+    .player-num-text {
+      color: #E8A800;
+      font-size: 15px;
+      font-weight: 900;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      letter-spacing: 0.05em;
+      line-height: 1;
+    }
+
+    /* 顔写真 */
+    .player-photo-wrap {
+      width: 82px;
+      flex-shrink: 0;
+      overflow: hidden;
+      position: relative;
+      background: #d0d4e0;
+    }
+    .player-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+    }
+    .player-photo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
       font-weight: 800;
       color: #0B2363;
-      opacity: 0.5;
+      opacity: 0.35;
+      background: #E0E4F0;
+    }
+
+    /* 右側コンテンツ */
+    .player-card-body {
+      flex: 1;
+      padding: 10px 12px 10px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
+      min-width: 0;
+    }
+    .player-name {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .player-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 1px;
     }
     .player-position-badge {
       background: #0B2363;
       color: white;
       font-size: 10px;
       font-weight: 700;
-      padding: 3px 7px;
+      padding: 2px 7px;
       border-radius: 4px;
-      flex-shrink: 0;
       letter-spacing: 0.05em;
-    }
-    .player-info {
-      flex: 1;
-      min-width: 0;
-    }
-    .player-name {
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      flex-shrink: 0;
     }
     .player-number {
       font-size: 11px;
       color: #aaa;
-      margin-top: 2px;
+    }
+    .player-bio {
+      font-size: 11.5px;
+      color: #555;
+      line-height: 1.55;
+      margin-top: 4px;
     }
     .tb-btn {
+      display: inline-block;
+      margin-top: 6px;
       background: #5B5BD6;
       color: white;
       text-decoration: none;
       font-size: 10px;
       font-weight: 700;
-      padding: 5px 9px;
-      border-radius: 6px;
+      padding: 4px 9px;
+      border-radius: 5px;
       letter-spacing: 0.04em;
-      flex-shrink: 0;
-      display: inline-block;
       white-space: nowrap;
+      align-self: flex-start;
     }
     .tb-btn:hover { opacity: 0.85; }
 
@@ -220,36 +235,17 @@
     .bench-card {
       background: white;
       border-radius: 10px;
-      padding: 12px 14px;
+      padding: 11px 14px;
       margin-bottom: 8px;
       box-shadow: 0 1px 4px rgba(0,0,0,0.07);
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    .bench-dot {
-      width: 6px;
-      height: 6px;
-      background: #ccc;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .bench-position {
-      font-size: 11px;
-      color: #666;
-      width: 32px;
-      flex-shrink: 0;
-    }
-    .bench-name {
-      flex: 1;
-      font-size: 15px;
-      font-weight: 600;
-    }
-    .bench-number {
-      font-size: 11px;
-      color: #aaa;
-      font-weight: 400;
-    }
+    .bench-dot { width: 6px; height: 6px; background: #ccc; border-radius: 50%; flex-shrink: 0; }
+    .bench-position { font-size: 11px; color: #666; width: 32px; flex-shrink: 0; }
+    .bench-name { flex: 1; font-size: 15px; font-weight: 600; }
+    .bench-number { font-size: 11px; color: #aaa; font-weight: 400; }
 
     /* ── TalentBook 説明 ── */
     .tb-note {
@@ -261,25 +257,13 @@
       color: #444;
       line-height: 1.6;
     }
-    .tb-note strong {
-      color: #5B5BD6;
-    }
+    .tb-note strong { color: #5B5BD6; }
 
     /* ── フッター ── */
-    .footer {
-      text-align: center;
-      padding: 20px 16px 32px;
-      font-size: 11px;
-      color: #aaa;
-    }
+    .footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: #aaa; }
 
     /* ── ローディング / エラー ── */
-    .status-msg {
-      text-align: center;
-      padding: 40px 20px;
-      color: #888;
-      font-size: 14px;
-    }
+    .status-msg { text-align: center; padding: 40px 20px; color: #888; font-size: 14px; }
     .error-msg {
       margin: 16px;
       background: #fff3f3;
@@ -331,7 +315,24 @@ const PHOTO_MAP = {
 };
 function photoUrl(number) {
   const id = PHOTO_MAP[String(number)];
-  return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w200` : null;
+  return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w400` : null;
+}
+
+// ── 選手紹介文マップ（TalentBook ストーリーID → 一言紹介）──
+// ★ TalentBook URL の末尾の数字がストーリーID
+const BIO_MAP = {
+  '61722': '「ポスト知念」の呼び声高い外野手。思い切りの良さと走攻守のバランスで、2年目はさらなる飛躍を誓う。',
+  '61295': '野手では珍しいトミー・ジョン手術を乗り越えたルーキー内野手。毎日の走り込みで磨いた俊足を武器に首位打者を狙う。',
+  '61530': '独立リーグ・NPBを経てオイシックス3年目。パンチ力ある打撃と全ポジション平均以上の総合力でキャリアハイを狙う。',
+  '61471': '広角に長打を打てる大型外野手。「脱力打法」を習得し、今季は二桁本塁打と打点でチームの勝利に貢献する。',
+  '61446': '聖光学院出身の先発右腕。最速148kmのストレートとスライダーを武器に、「仲間のために投げる」ことを誓う2年目。',
+  '61487': 'ルーキーながら捕手最多71試合出場を果たした頼れる司令塔。投手とのコミュニケーション力と勝負強い打撃も光る。',
+  '61425': '内外野を幅広くこなすユーティリティルーキー。ミート力と頭から突っ込む熱いプレーで1年目のスタメン獲得を狙う。',
+};
+function bioText(tbUrl) {
+  if (!tbUrl) return '';
+  const m = tbUrl.match(/\/stories\/(\d+)/);
+  return m ? (BIO_MAP[m[1]] || '') : '';
 }
 
 // ── チームカラー ─────────────────────────────────────────────
@@ -416,14 +417,12 @@ function parseData(rows) {
 function isToday(dateStr) {
   if (!dateStr) return false;
   const today = new Date();
-  // "2026年6月20日（土）" 形式
   const m = dateStr.match(/(\d{4})年(\d{1,2})月(\d{1,2})日/);
   if (m) {
     return parseInt(m[1]) === today.getFullYear() &&
            parseInt(m[2]) === today.getMonth() + 1 &&
            parseInt(m[3]) === today.getDate();
   }
-  // Apps Scriptが日付オブジェクトを文字列化した場合
   const d = new Date(dateStr);
   if (!isNaN(d)) {
     return d.getFullYear() === today.getFullYear() &&
@@ -436,14 +435,11 @@ function isToday(dateStr) {
 // ── 時刻フォーマット ─────────────────────────────────────────
 function formatTime(val) {
   if (!val) return '';
-  // すでに "16:00" 形式
   if (/^\d{1,2}:\d{2}$/.test(val)) return val;
-  // Apps Script が Date オブジェクトを文字列化した場合（"Sat Dec 30 1899 16:00:00..."）
   const d = new Date(val);
   if (!isNaN(d)) {
     return `${d.getHours()}:${d.getMinutes().toString().padStart(2, '0')}`;
   }
-  // Sheetsの内部表現（小数: 0.666... = 16:00）
   const num = parseFloat(val);
   if (!isNaN(num) && num > 0 && num < 1) {
     const totalMin = Math.round(num * 24 * 60);
@@ -472,63 +468,70 @@ function renderWaiting() {
   `;
 }
 
+// ── 選手カード描画ヘルパー ───────────────────────────────────
+function buildPlayerCard(p, orderLabel, isPitcher) {
+  const url     = photoUrl(p.number);
+  const initial = p.name.trim().slice(0, 1);
+  const bio     = bioText(p.tbUrl);
+
+  const photoHtml = url
+    ? `<img class="player-photo" src="${url}" alt="${p.name}"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+       <div class="player-photo-placeholder" style="display:none">${initial}</div>`
+    : `<div class="player-photo-placeholder">${initial}</div>`;
+
+  const tbHtml = p.tbUrl
+    ? `<a class="tb-btn" href="${p.tbUrl}" target="_blank" rel="noopener">プロフィール ›</a>`
+    : '';
+
+  const bioHtml = bio ? `<div class="player-bio">${bio}</div>` : '';
+
+  return `
+    <div class="player-card${isPitcher ? ' is-pitcher' : ''}">
+      <div class="player-num-band">
+        <div class="player-num-text">${orderLabel}</div>
+      </div>
+      <div class="player-photo-wrap">${photoHtml}</div>
+      <div class="player-card-body">
+        <div class="player-name">${p.name}</div>
+        <div class="player-meta">
+          <span class="player-position-badge">${p.pos}</span>
+          ${p.number ? `<span class="player-number">#${p.number}</span>` : ''}
+        </div>
+        ${bioHtml}
+        ${tbHtml}
+      </div>
+    </div>
+  `;
+}
+
 // ── 描画 ─────────────────────────────────────────────────────
 function render(gameInfo, players) {
   const starters = players.filter(p => p.starter && !p.pitcher);
   const pitcher  = players.find(p => p.pitcher);
   const bench    = players.filter(p => !p.starter);
 
-  const tbLink = (p) => p.tbUrl
-    ? `<a class="tb-btn" href="${p.tbUrl}" target="_blank" rel="noopener">プロフィール ›</a>`
+  const starterCards = starters.map(p =>
+    buildPlayerCard(p, p.order, false)
+  ).join('');
+
+  const pitcherCard = pitcher
+    ? buildPlayerCard(pitcher, '投手', true)
     : '';
 
-  const photoEl = (p) => {
-    const url = photoUrl(p.number);
-    const initial = p.name.trim().slice(0, 1);
-    return url
-      ? `<img class="player-photo" src="${url}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
-        + `<div class="player-photo-placeholder" style="display:none">${initial}</div>`
-      : `<div class="player-photo-placeholder">${initial}</div>`;
-  };
-
-  const starterCards = starters.map(p => `
-    <div class="player-card">
-      <div class="player-order">${p.order}</div>
-      ${photoEl(p)}
-      <div class="player-info">
-        <div class="player-name">${p.name}</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
-          <div class="player-position-badge">${p.pos}</div>
-          ${p.number ? `<span class="player-number">#${p.number}</span>` : ''}
-        </div>
+  const benchCards = bench.map(p => {
+    const tbHtml = p.tbUrl
+      ? `<a class="tb-btn" href="${p.tbUrl}" target="_blank" rel="noopener">プロフィール ›</a>`
+      : '';
+    return `
+      <div class="bench-card">
+        <div class="bench-dot"></div>
+        <div class="bench-position">${p.pos}</div>
+        <div class="bench-name">${p.name}${p.number ? `<span class="bench-number"> #${p.number}</span>` : ''}</div>
+        ${tbHtml}
       </div>
-      ${tbLink(p)}
-    </div>
-  `).join('');
-
-  const pitcherCard = pitcher ? `
-    <div class="player-card is-pitcher">
-      <div class="player-order pitcher-label">投手</div>
-      ${photoEl(pitcher)}
-      <div class="player-info">
-        <div class="player-name">${pitcher.name}</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
-          <div class="player-position-badge">${pitcher.pos}</div>
-          ${pitcher.number ? `<span class="player-number">#${pitcher.number}</span>` : ''}
-        </div>
-      </div>
-      ${tbLink(pitcher)}
-    </div>
-  ` : '';
-
-  const benchCards = bench.map(p => `
-    <div class="bench-card">
-      <div class="bench-dot"></div>
-      <div class="bench-position">${p.pos}</div>
-      <div class="bench-name">${p.name}${p.number ? `<span class="bench-number"> #${p.number}</span>` : ''}</div>
-      ${tbLink(p)}
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
   const opponent  = gameInfo['対戦相手'] || '—';
   const teamColor = TEAM_COLORS[opponent] || '#0B2363';

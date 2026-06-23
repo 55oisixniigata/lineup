@@ -609,7 +609,7 @@ function findH2H(opponent, headToHead) {
 function buildHighlightsHtml(gameInfo, players, stats) {
   if (!stats || stats.error) {
     return `<div class="highlights-card">
-      <div class="highlights-eyebrow">TODAY'S HIGHLIGHTS</div>
+      <div class="highlights-eyebrow">GAME HIGHLIGHTS</div>
     </div>`;
   }
 
@@ -708,7 +708,7 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     } else if (recent5 && recent5.count >= 3) {
       const badges = (recent5.games || []).map(r =>
         r === 'W' ? '<span style="color:#015095;font-weight:700;">○</span>'
-                  : r === 'L' ? '<span style="color:#c0392b;font-weight:700;">●</span>'
+                  : r === 'L' ? '<span style="color:#1a1a1a;font-weight:700;">●</span>'
                                : '<span style="color:#888;">△</span>'
       ).join(' ');
       recentHtml = `直近${recent5.count}試合：${badges}`;
@@ -743,7 +743,7 @@ function buildHighlightsHtml(gameInfo, players, stats) {
 
   return `
     <div class="highlights-card">
-      <div class="highlights-eyebrow">TODAY'S HIGHLIGHTS</div>
+      <div class="highlights-eyebrow">GAME HIGHLIGHTS</div>
       ${rows}
     </div>
   `;

@@ -49,12 +49,13 @@
       pointer-events: none;
     }
     .header-logo {
-      width: 72px;
-      height: 72px;
+      width: 80px;
+      height: 80px;
       object-fit: contain;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       position: relative;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+      -webkit-mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, black 45%, transparent 100%);
+      mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, black 45%, transparent 100%);
     }
     .header-team {
       font-size: 10px;

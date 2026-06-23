@@ -715,10 +715,22 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     }
   }
 
-  // ── 注目ポイント：チーム成績 → 注目選手 → 感情コピー ──
+  // ── チーム内ランキング算出ヘルパー ──
+  function teamRank(name, arr, field, asc) {
+    const clean = n => n.replace(/\s+/g, '');
+    const valid = arr.filter(x => x[field] !== undefined && x[field] !== null);
+    const sorted = [...valid].sort((a, b) => asc ? a[field] - b[field] : b[field] - a[field]);
+    const idx = sorted.findIndex(x => clean(x.name) === clean(name));
+    return idx >= 0 ? idx + 1 : null;
+  }
+  function rankLabel(r) {
+    return r === 1 ? 'チームトップ' : r === 2 ? 'チーム2位' : r === 3 ? 'チーム3位' : null;
+  }
+
+  // ── 注目ポイント組み立て ──
   const noteParts = [];
 
-  // Part1: チーム成績（ホーム/アウェイ + 直近対戦）
+  // Part1: チーム状況（直近対戦 + ホーム/アウェイ成績）
   const venue = gameInfo['球場'] || '';
   const isHome = venue.includes('新潟') || venue.includes('ハードオフ') || venue.includes('HARD OFF');
   if (oisix) {
@@ -726,11 +738,10 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     const hm = homeStr ? homeStr.match(/(\d+)-(\d+)/) : null;
     if (hm) {
       noteParts.push(isHome
-        ? `今季のホーム成績は${hm[1]}勝${hm[2]}敗。地元・新潟での一戦だ。`
-        : `今季のアウェイ成績は${hm[1]}勝${hm[2]}敗。敵地で意地を見せたい。`);
+        ? `今季のホーム成績は${hm[1]}勝${hm[2]}敗。`
+        : `今季のアウェイ成績は${hm[1]}勝${hm[2]}敗。`);
     }
   }
-  // 直近の対戦相手との結果（lastGamesから）
   if (rec && !rec.error && rec.lastGames && opponent) {
     const shortOpp = opponent
       .replace(/^(北海道|東北|千葉|東京|埼玉|横浜|大阪|福岡|広島)/, '')
@@ -739,9 +750,7 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     if (lastVs) {
       const rText = lastVs.result === 'W'
         ? `${lastVs.oisixScore}−${lastVs.oppScore}で勝利`
-        : lastVs.result === 'L'
-          ? `${lastVs.oisixScore}−${lastVs.oppScore}で敗戦`
-          : '引き分け';
+        : lastVs.result === 'L' ? `${lastVs.oisixScore}−${lastVs.oppScore}で敗戦` : '引き分け';
       noteParts.push(`前回の${shortOpp}戦は${rText}。`);
     } else if (h2hLine) {
       noteParts.push(`${h2hLine}。`);
@@ -750,60 +759,60 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     noteParts.push(`${h2hLine}。`);
   }
 
-  // Part2: 先発投手（詳細）
+  // Part2: 先発投手（チーム内順位付き）
   if (pitcherP) {
     if (pStat) {
-      const eraVal = parseFloat(pStat.era);
-      const eraText = pStat.era !== '-.--' ? `防御率${pStat.era}` : '';
-      const soText  = pStat.so > 0 ? `${pStat.so}奪三振` : '';
-      const cond    = !isNaN(eraVal)
-        ? (eraVal < 3.0 ? '。安定した投球が光る右腕だ' : eraVal > 5.5 ? '。今日こそ本来の姿を' : '')
-        : '';
-      const details = [eraText, soText].filter(Boolean).join('・');
-      noteParts.push(`先発は${pitcherP.name}（${pStat.wins}勝${pStat.losses}敗${details ? ' ' + details : ''}）が登板${cond}。`);
+      const pitchAll = (stats.pitching || []).filter(p => p.apps >= 5);
+      const eraRank  = teamRank(pitcherP.name, pitchAll, 'era', true);
+      const soRank   = teamRank(pitcherP.name, stats.pitching || [], 'so');
+      const pitchHighlights = [];
+      if (rankLabel(eraRank) && pStat.era !== '-.--') pitchHighlights.push(`${rankLabel(eraRank)}の防御率${pStat.era}`);
+      if (rankLabel(soRank) && pStat.so > 0)          pitchHighlights.push(`${rankLabel(soRank)}の${pStat.so}奪三振`);
+      const recStr = `${pStat.wins}勝${pStat.losses}敗`;
+      if (pitchHighlights.length > 0) {
+        noteParts.push(`先発は${pitcherP.name}（${recStr}）。${pitchHighlights.slice(0,2).join('、')}を誇る。`);
+      } else {
+        const eraText = pStat.era !== '-.--' ? ` 防御率${pStat.era}` : '';
+        noteParts.push(`先発は${pitcherP.name}（${recStr}${eraText}）が登板。`);
+      }
     } else {
       noteParts.push(`先発は${pitcherP.name}が登板。`);
     }
   }
 
-  // Part2: 注目打者（日付でローテーション→連日同じ選手を避ける）
+  // Part2: 注目打者（日付ローテ + チーム内順位付き）
   if (bStats.length > 0) {
     const idx = dateNum % bStats.length;
     const { p: fp, s: fs } = bStats[idx];
-    const picks = [];
-    if (fs.hr  >= 3)                      picks.push(`${fs.hr}本塁打`);
-    if (fs.rbi >= 8)                      picks.push(`${fs.rbi}打点`);
-    if (fs.sb  >= 5)                      picks.push(`${fs.sb}盗塁`);
-    if (parseFloat(fs.avg) >= 0.260)      picks.push(`打率${fs.avg}`);
-    if (picks.length === 0)               picks.push(`打率${fs.avg}`);
-    noteParts.push(`打線では${fp.name}（${picks.slice(0,2).join('・')}）の活躍に期待したい。`);
-  }
-
-  // Part3: 感情的コピー
-  let copy = '';
-  if (rec && !rec.error) {
-    if (streak && streak.count >= 4 && streak.type === 'W') {
-      copy = `${streak.count}連勝の波に乗れ。止まるな、オイシックス。`;
-    } else if (streak && streak.count >= 3 && streak.type === 'W') {
-      copy = `連勝街道をひた走る。今日も勝利をつかみにいく。`;
-    } else if (streak && streak.count >= 3 && streak.type === 'L') {
-      copy = `連敗を止めるのは今日しかない。反撃の狼煙を上げろ。`;
-    } else if (monthRecord && monthRecord.wins > monthRecord.losses + 2) {
-      copy = `好調な月間をさらに加速させる一戦だ。`;
-    } else if (monthRecord && monthRecord.losses > monthRecord.wins + 2) {
-      copy = `苦しい時こそ、チームの底力を見せる時だ。`;
+    const batAll = stats.batting || [];
+    const batQual = batAll.filter(b => b.ab >= 20);
+    const hrRank  = teamRank(fp.name, batAll,  'hr');
+    const rbiRank = teamRank(fp.name, batAll,  'rbi');
+    const sbRank  = teamRank(fp.name, batAll,  'sb');
+    const avgRank = teamRank(fp.name, batQual, 'avg');
+    // チーム内上位に入っているスタッツだけ紹介
+    const batHighlights = [];
+    if (rankLabel(hrRank)  && fs.hr  >= 2) batHighlights.push(`${rankLabel(hrRank)}の${fs.hr}本塁打`);
+    if (rankLabel(rbiRank) && fs.rbi >= 5) batHighlights.push(`${rankLabel(rbiRank)}の${fs.rbi}打点`);
+    if (rankLabel(sbRank)  && fs.sb  >= 3) batHighlights.push(`${rankLabel(sbRank)}の${fs.sb}盗塁`);
+    if (rankLabel(avgRank) && parseFloat(fs.avg) >= 0.240) batHighlights.push(`${rankLabel(avgRank)}の打率${fs.avg}`);
+    if (batHighlights.length > 0) {
+      noteParts.push(`打線では${fp.name}に注目。${batHighlights.slice(0,2).join('、')}を記録中だ。`);
+    } else {
+      noteParts.push(`打線では${fp.name}（打率${fs.avg}）の活躍に期待したい。`);
     }
   }
-  if (!copy) {
-    const defaults = [
-      'ひとつひとつ、積み上げていく。',
-      '新潟から、頂点を目指す。',
-      '今日の一勝が、明日をつくる。',
-      '諦めない姿勢が、スタンドを熱くする。',
-    ];
-    copy = defaults[dateNum % defaults.length];
+
+  // Part3: データ起因のコピーのみ（汎用コピーは出さない）
+  if (rec && !rec.error) {
+    if (streak && streak.count >= 3 && streak.type === 'W') {
+      noteParts.push(`${streak.count}連勝中。`);
+    } else if (streak && streak.count >= 3 && streak.type === 'L') {
+      noteParts.push(`${streak.count}連敗中。反撃のきっかけをつかみたい。`);
+    } else if (monthRecord && monthRecord.wins > monthRecord.losses + 3) {
+      noteParts.push(`今月は${monthRecord.wins}勝${monthRecord.losses}敗と勝ち越しが続いている。`);
+    }
   }
-  noteParts.push(copy);
 
   const noteHtml = noteParts.join('');
 

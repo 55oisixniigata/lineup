@@ -170,6 +170,13 @@
       border: 2px dashed #E8A800;
       margin-top: 6px;
     }
+    .player-card.is-manager {
+      border: 2px dashed #015095;
+      margin-top: 6px;
+    }
+    .player-card.is-manager .player-num-band {
+      background: #013a6b;
+    }
 
     /* 背番号バンド */
     .player-num-band {
@@ -700,6 +707,46 @@ function buildPlayerCard(p, orderLabel, isPitcher) {
   `;
 }
 
+// ── 監督 ─────────────────────────────────────────────────────
+const MANAGER = {
+  name: '武田 勝',
+  number: '38',
+  pos: '監督',
+  tbUrl: '',
+};
+
+function buildManagerCard() {
+  const pUrl = profileUrl('38');
+  const profileHtml = pUrl
+    ? `<a class="profile-btn" href="${pUrl}" target="_blank" rel="noopener">プロフィール ›</a>`
+    : '';
+  const photoUrl = PHOTO_MAP['38']
+    ? `https://drive.google.com/thumbnail?id=${PHOTO_MAP['38']}&sz=w400`
+    : null;
+  const photoHtml = photoUrl
+    ? `<img class="player-photo" src="${photoUrl}" alt="武田勝"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+       <div class="player-photo-placeholder" style="display:none">武</div>`
+    : `<div class="player-photo-placeholder">武</div>`;
+  return `
+    <div class="player-card is-manager">
+      <div class="player-num-band">
+        <div class="player-num-text">監督</div>
+      </div>
+      <div class="player-photo-wrap">${photoHtml}</div>
+      <div class="player-card-body">
+        <div class="player-name">${MANAGER.name}</div>
+        <div class="player-meta">
+          <span class="player-position-badge">監督</span>
+          <span class="player-number">背番号 38</span>
+        </div>
+        <div class="player-bio">日本ハム等でプロ17年。「打たせて取る」精密機械と呼ばれた元右腕が、2024年より監督として采配を振るう。</div>
+        ${profileHtml ? `<div class="btn-row">${profileHtml}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
 // ── 描画 ─────────────────────────────────────────────────────
 function render(gameInfo, players) {
   const starters = players.filter(p => p.starter && !p.pitcher);
@@ -744,7 +791,7 @@ function render(gameInfo, players) {
 
     <div class="section">
       <div class="section-title">スターティングラインナップ</div>
-      ${starterCards}${pitcherCard}
+      ${starterCards}${pitcherCard}${buildManagerCard()}
     </div>
 
     ${benchSection}

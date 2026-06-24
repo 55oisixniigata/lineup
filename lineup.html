@@ -271,6 +271,11 @@
       font-size: 11.5px;
       color: #555;
       line-height: 1.55;
+    }
+    .player-food {
+      color: #888;
+      font-size: 11px;
+      margin-top: 2px;
       margin-top: 4px;
     }
     .btn-row {
@@ -562,6 +567,56 @@ const MANUAL_BIO_MAP = {
   '73': '安田学園高・城西大から横浜ベイブルースを経て加入。座右の銘「至誠通天」を胸に、王貞治に憧れる誠実なプレーを。',
 };
 
+// ── 好きな食べ物マップ（背番号 → 食べ物）──
+// ★ 選手プロフィールページから取得（https://www.niigata-albirex-bc.jp/team/player/xxx/）
+const FAVORITE_FOOD_MAP = {
+  '0':  '唐揚げ',
+  '1':  '嫁が作った料理',
+  '3':  'なんでも',
+  '4':  'ラーメン',
+  '5':  'コーヒー',
+  '7':  'センマイ刺し',
+  '9':  'ラーメン',
+  '11': '甘いもの',
+  '12': 'ピザ',
+  '15': 'みそ汁',
+  '17': '餃子',
+  '20': '肉と魚',
+  '23': '鮨',
+  '24': 'クレープ',
+  '25': 'チョコ、ハンバーガー',
+  '26': 'プッチンプリン',
+  '28': '焼肉',
+  '29': 'ラーメン',
+  '30': 'そば',
+  '32': 'ハンバーグ',
+  '33': 'ホテルのスクランブルエッグ',
+  '34': '餃子',
+  '35': '魚、アサイーボール、もんじゃ',
+  '36': 'ピザ',
+  '37': '刺身',
+  '38': 'ラーメン',
+  '39': '鶏肉',
+  '41': 'ラーメン',
+  '42': 'ピザ',
+  '43': 'グミ',
+  '44': 'すいか',
+  '45': 'ラーメン',
+  '46': 'いちご',
+  '47': '焼肉',
+  '48': '果物',
+  '50': 'オムライス',
+  '51': 'ラーメン',
+  '52': '肉',
+  '53': 'とんかつ',
+  '54': '春巻き',
+  '55': '麻婆豆腐',
+  '56': 'ラーメン',
+  '60': '甘いもの',
+  '62': '焼肉',
+  '73': '韓国海苔',
+};
+
 function bioText(tbUrl, number) {
   const tbBio = (() => {
     if (!tbUrl) return '';
@@ -681,9 +736,9 @@ function buildHighlightsHtml(gameInfo, players, stats) {
   // 順位行
   let rankHtml = '';
   if (oisix) {
-    const rankStr = oisix.rank ? `東地区 <strong>${oisix.rank}位</strong>` : '';
+    const rankStr = oisix.rank ? `東地区 <strong>${oisix.rank}位</strong>／5チーム中` : '';
     const rec2 = `${oisix.wins}勝${oisix.losses}敗${oisix.ties > 0 ? oisix.ties+'分' : ''}（勝率${oisix.pct}）`;
-    rankHtml = `${rankStr ? rankStr + '　' : ''}${rec2}`;
+    rankHtml = rankStr ? `${rankStr}<br><span style="font-size:12px;color:#555;">${rec2}</span>` : rec2;
   }
 
   // 月間成績行
@@ -820,7 +875,21 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     if (batHighlights.length > 0) {
       noteParts.push(`打線では${fp.name}に注目。${batHighlights.slice(0,2).join('、')}を記録中だ。`);
     } else {
-      noteParts.push(`打線では${fp.name}（打率${fs.avg}）の活躍に期待したい。`);
+      // 条件未達でもチーム内で最上位の指標を見つけて理由を添える
+      const tAvgRank = teamRank(fp.name, batQual, 'avg');
+      const tHrRank  = teamRank(fp.name, batAll, 'hr');
+      const tRbiRank = teamRank(fp.name, batAll, 'rbi');
+      const tSbRank  = teamRank(fp.name, batAll, 'sb');
+      const fallback = [];
+      if (tAvgRank && tAvgRank <= 5 && parseFloat(fs.avg) >= 0.200) fallback.push(`チーム打率${tAvgRank}位（${fs.avg}）`);
+      if (tHrRank  && tHrRank  <= 5 && fs.hr  >= 1) fallback.push(`チーム本塁打${tHrRank}位（${fs.hr}本）`);
+      if (tRbiRank && tRbiRank <= 5 && fs.rbi >= 1) fallback.push(`チーム打点${tRbiRank}位（${fs.rbi}打点）`);
+      if (tSbRank  && tSbRank  <= 3 && fs.sb  >= 1) fallback.push(`チーム盗塁${tSbRank}位（${fs.sb}盗塁）`);
+      if (fallback.length > 0) {
+        noteParts.push(`打線では${fp.name}に注目。${fallback[0]}を記録中だ。`);
+      } else {
+        noteParts.push(`打線では${fp.name}（打率${fs.avg}、${fs.rbi}打点）の活躍に期待したい。`);
+      }
     }
   }
 
@@ -1070,6 +1139,8 @@ function buildPlayerCard(p, orderLabel, isPitcher) {
     : '';
 
   const bioHtml = bio ? `<div class="player-bio">${bio}</div>` : '';
+  const food    = p.number ? (FAVORITE_FOOD_MAP[String(p.number)] || '') : '';
+  const foodHtml = food ? `<div class="player-bio player-food">🍴 好きな食べ物：${food}</div>` : '';
 
   return `
     <div class="player-card${isPitcher ? ' is-pitcher' : ''}">
@@ -1084,6 +1155,7 @@ function buildPlayerCard(p, orderLabel, isPitcher) {
           ${p.number ? `<span class="player-number">背番号 ${p.number}</span>` : ''}
         </div>
         ${bioHtml}
+        ${foodHtml}
         ${(tbHtml || profileHtml) ? `<div class="btn-row">${profileHtml}${tbHtml}</div>` : ''}
       </div>
     </div>

@@ -379,6 +379,76 @@
 
     /* ── ローディング / エラー ── */
     .status-msg { text-align: center; padding: 40px 20px; color: #888; font-size: 14px; }
+
+    /* ── ローディングアニメーション ── */
+    #loading-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px 40px;
+    }
+    .loading-scene {
+      position: relative;
+      width: 260px;
+      height: 110px;
+      overflow: hidden;
+    }
+    .loading-ball {
+      position: absolute;
+      font-size: 30px;
+      line-height: 1;
+      animation: ballArc 1.4s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+      will-change: transform;
+    }
+    .loading-mascot {
+      position: absolute;
+      bottom: 0;
+      width: 64px;
+      height: auto;
+      animation: mascotChase 1.4s linear infinite;
+      will-change: left;
+    }
+    .loading-shadow {
+      position: absolute;
+      bottom: 2px;
+      width: 36px;
+      height: 8px;
+      background: rgba(0,0,0,0.12);
+      border-radius: 50%;
+      animation: shadowChase 1.4s linear infinite;
+    }
+    @keyframes ballArc {
+      0%   { left: -40px; top: 72px; transform: rotate(0deg); }
+      25%  { top: 12px; }
+      50%  { left: 130px; top: 4px; transform: rotate(200deg); }
+      75%  { top: 12px; }
+      100% { left: 310px; top: 72px; transform: rotate(400deg); }
+    }
+    @keyframes mascotChase {
+      0%   { left: -72px; }
+      100% { left: 300px; }
+    }
+    @keyframes shadowChase {
+      0%   { left: -54px; opacity: 0.6; }
+      100% { left: 284px; opacity: 0.6; }
+    }
+    .loading-text {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #999;
+      letter-spacing: 0.05em;
+    }
+    .loading-dots::after {
+      content: '';
+      animation: ldots 1.2s steps(4, end) infinite;
+    }
+    @keyframes ldots {
+      0%   { content: ''; }
+      25%  { content: '・'; }
+      50%  { content: '・・'; }
+      75%  { content: '・・・'; }
+    }
     .error-msg {
       margin: 16px;
       background: #fff3f3;
@@ -403,9 +473,7 @@
   </div>
 </div>
 
-<div id="app">
-  <div class="status-msg">読み込み中…</div>
-</div>
+<div id="app"></div>
 
 
 <div class="footer">
@@ -1295,8 +1363,47 @@ function render(gameInfo, players, stats) {
   `;
 }
 
+// ── ローディング画面 ─────────────────────────────────────────
+function showLoading() {
+  const app = document.getElementById('app');
+  const screen = document.createElement('div');
+  screen.id = 'loading-screen';
+
+  const scene = document.createElement('div');
+  scene.className = 'loading-scene';
+
+  // ⚾ ボール
+  const ball = document.createElement('span');
+  ball.className = 'loading-ball';
+  ball.textContent = '⚾';
+  scene.appendChild(ball);
+
+  // 影
+  const shadow = document.createElement('div');
+  shadow.className = 'loading-shadow';
+  scene.appendChild(shadow);
+
+  // アルファくん（ヘッダーからクローン）
+  const mascotSrc = document.querySelector('.header-mascot-left');
+  if (mascotSrc) {
+    const clone = mascotSrc.cloneNode(true);
+    clone.className = 'loading-mascot';
+    scene.appendChild(clone);
+  }
+
+  const text = document.createElement('div');
+  text.className = 'loading-text';
+  text.innerHTML = '読み込み中<span class="loading-dots"></span>';
+
+  screen.appendChild(scene);
+  screen.appendChild(text);
+  app.innerHTML = '';
+  app.appendChild(screen);
+}
+
 // ── メイン ───────────────────────────────────────────────────
 async function main() {
+  showLoading();
   try {
     // CSV と NPB成績を並行取得（stats は失敗してもページは動く）
     const [csvRes, stats] = await Promise.all([

@@ -396,49 +396,55 @@
       align-items: center;
       justify-content: center;
     }
-    /* アルファくんがぴょんぴょん */
+    /* アルファくんがふわふわ浮遊 */
     .loading-mascot {
-      width: 80px;
+      width: 100px;
       height: auto;
-      animation: mascotBob 0.7s ease-in-out infinite alternate;
       position: relative;
       z-index: 1;
+      animation: mascotFloat 1.6s ease-in-out infinite alternate,
+                 mascotWing  0.8s ease-in-out infinite alternate;
+      transform-origin: center bottom;
     }
-    @keyframes mascotBob {
-      from { transform: translateY(0px); }
-      to   { transform: translateY(-14px); }
+    @keyframes mascotFloat {
+      from { transform: translateY(0px) rotate(-1deg); }
+      to   { transform: translateY(-18px) rotate(1deg); }
+    }
+    @keyframes mascotWing {
+      from { filter: drop-shadow(0 6px 8px rgba(0,0,0,0.15)); }
+      to   { filter: drop-shadow(0 12px 16px rgba(0,0,0,0.08)); }
     }
     /* ボールが周回 */
     .loading-orbit {
       position: absolute;
       inset: 0;
-      animation: orbitSpin 1.1s linear infinite;
+      animation: orbitSpin 1.2s linear infinite;
     }
     .loading-orbit::before {
       content: '⚾';
       position: absolute;
-      top: 6px;
+      top: 4px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 26px;
+      font-size: 24px;
       line-height: 1;
     }
     @keyframes orbitSpin {
       from { transform: rotate(0deg); }
       to   { transform: rotate(360deg); }
     }
-    /* 着地影 */
+    /* 浮遊影 */
     .loading-shadow {
-      width: 48px;
+      width: 60px;
       height: 10px;
-      background: rgba(0,0,0,0.10);
+      background: rgba(0,0,0,0.12);
       border-radius: 50%;
-      margin-top: 4px;
-      animation: shadowPulse 0.7s ease-in-out infinite alternate;
+      margin-top: 2px;
+      animation: shadowFloat 1.6s ease-in-out infinite alternate;
     }
-    @keyframes shadowPulse {
-      from { transform: scaleX(1);   opacity: 0.15; }
-      to   { transform: scaleX(0.6); opacity: 0.06; }
+    @keyframes shadowFloat {
+      from { transform: scaleX(1);    opacity: 0.18; }
+      to   { transform: scaleX(0.5);  opacity: 0.06; }
     }
     .loading-text {
       margin-top: 14px;
@@ -1386,13 +1392,12 @@ function showLoading() {
   orbit.className = 'loading-orbit';
   stage.appendChild(orbit);
 
-  // アルファくん（ヘッダーからクローン）
-  const mascotSrc = document.querySelector('.header-mascot-left');
-  if (mascotSrc) {
-    const clone = mascotSrc.cloneNode(true);
-    clone.className = 'loading-mascot';
-    stage.appendChild(clone);
-  }
+  // アルファくん（羽広げポーズ）
+  const mascotImg = document.createElement('img');
+  mascotImg.className = 'loading-mascot';
+  mascotImg.src = 'arfa_loading.png';
+  mascotImg.alt = 'アルファくん';
+  stage.appendChild(mascotImg);
 
   // 着地影
   const shadow = document.createElement('div');

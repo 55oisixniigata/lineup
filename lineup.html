@@ -758,6 +758,7 @@ function buildHighlightsHtml(gameInfo, players, stats) {
   if (!stats || stats.error) {
     return `<div class="highlights-card">
       <div class="highlights-eyebrow">GAME HIGHLIGHTS</div>
+      <div class="highlights-loading">データ取得中<span class="loading-dots"></span></div>
     </div>`;
   }
 
@@ -1408,29 +1409,29 @@ function showLoading() {
   app.appendChild(screen);
 }
 
-// ── メイン ───────────────────────────────────────────────────
+// ── メイン（プログレッシブ2フェーズ）────────────────────────
 async function main() {
   showLoading();
+  let gameInfo, players;
+
+  // ── Phase 1: CSVだけ先取得してすぐ描画 ──
   try {
-    // CSV と NPB成績を並行取得（stats は失敗してもページは動く）
-    const [csvRes, stats] = await Promise.all([
-      fetch(CSV_URL),
-      fetchNpbStats(),
-    ]);
+    const csvRes = await fetch(CSV_URL);
     if (!csvRes.ok) throw new Error(`HTTP ${csvRes.status}`);
     const text = await csvRes.text();
     const rows = parseCSV(text);
-    const { gameInfo, players } = parseData(rows);
+    ({ gameInfo, players } = parseData(rows));
 
     const dateStr   = gameInfo['日付'] || '';
     const hasLineup = players.some(p => p.starter);
 
     if (!isToday(dateStr)) {
       renderWaiting();
+      return; // stats不要なので終了
     } else if (!hasLineup || !isTimeToShowLineup(gameInfo['試合開始'])) {
-      renderGameWithWaiting(gameInfo, players, stats);
+      renderGameWithWaiting(gameInfo, players, null); // statsなしで即描画
     } else {
-      render(gameInfo, players, stats);
+      render(gameInfo, players, null); // statsなしで即描画
     }
   } catch (e) {
     document.getElementById('app').innerHTML = `
@@ -1439,6 +1440,20 @@ async function main() {
         <small style="color:#aaa">エラー詳細: ${e.message}</small>
       </div>
     `;
+    return;
+  }
+
+  // ── Phase 2: GAS stats をバックグラウンド取得 → HIGHLIGHTSだけ差し替え ──
+  try {
+    const stats = await fetchNpbStats();
+    if (!stats) return;
+    const hlEl = document.querySelector('.highlights-card');
+    if (!hlEl) return;
+    const tmp = document.createElement('div');
+    tmp.innerHTML = buildHighlightsHtml(gameInfo, players, stats);
+    hlEl.replaceWith(tmp.firstElementChild);
+  } catch (_) {
+    // stats失敗はサイレント（ラインナップは表示済み）
   }
 }
 

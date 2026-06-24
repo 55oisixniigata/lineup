@@ -31,8 +31,8 @@
       pointer-events: none;
       z-index: 0;
     }
-    .header-mascot-left  { left: 0; }
-    .header-mascot-right { right: 0; }
+    .header-mascot-left  { left: 14px; }
+    .header-mascot-right { right: 14px; }
     /* 右上の光彩 */
     .header::after {
       content: '';
@@ -626,15 +626,33 @@ function bioText(tbUrl, number) {
   return tbBio || (number ? (MANUAL_BIO_MAP[String(number)] || '') : '');
 }
 
-// ── NPB成績取得 ──────────────────────────────────────────────
+// ── NPB成績取得（30分キャッシュ）─────────────────────────────
+const STATS_CACHE_KEY = 'npb_stats_v1';
+const STATS_CACHE_TTL = 30 * 60 * 1000; // 30分
+
 async function fetchNpbStats() {
   try {
+    // キャッシュ確認
+    const raw = localStorage.getItem(STATS_CACHE_KEY);
+    if (raw) {
+      const { ts, data } = JSON.parse(raw);
+      if (Date.now() - ts < STATS_CACHE_TTL) return data;
+    }
+    // 新規取得
     const res = await Promise.race([
       fetch(STATS_URL),
-      new Promise((_, r) => setTimeout(() => r(new Error('timeout')), 10000))
+      new Promise((_, r) => setTimeout(() => r(new Error('timeout')), 12000))
     ]);
-    return await res.json();
+    const data = await res.json();
+    // キャッシュ保存
+    try { localStorage.setItem(STATS_CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch(_) {}
+    return data;
   } catch(e) {
+    // キャッシュが古くてもフォールバックとして使う
+    try {
+      const raw = localStorage.getItem(STATS_CACHE_KEY);
+      if (raw) return JSON.parse(raw).data;
+    } catch(_) {}
     return null;
   }
 }
@@ -1052,15 +1070,15 @@ function gameCardHtml(gameInfo, players, stats) {
   const gameTime  = formatTime(gameInfo['試合開始'] || '');
   const venueRow  = venue    ? `<div class="game-meta-row"><span class="game-meta-icon">🏟️</span>${venue}</div>` : '';
   const timeRow   = gameTime ? `<div class="game-meta-row"><span class="game-meta-icon">⏰</span>${gameTime} 試合開始</div>` : '';
-  const highlightsHtml = (players && stats !== undefined)
-    ? buildHighlightsHtml(gameInfo, players, stats)
+  const highlightsHtml = players
+    ? buildHighlightsHtml(gameInfo, players, stats || null)
     : '';
   return `
     <div class="game-card">
       <div class="game-card-title">TODAY'S GAME</div>
       <div class="game-meta">
         <div class="game-meta-row"><span class="game-meta-icon">📅</span>${gameDate}</div>
-        <div class="game-meta-row"><span class="game-meta-icon">⚾</span><span class="game-meta-vs" style="color:${teamColor}">vs ${opponent}</span></div>
+        <div class="game-meta-row"><span class="game-meta-icon">⚾</span><span class="game-meta-vs">vs <span style="color:${teamColor}">${opponent}</span></span></div>
         ${venueRow}
         ${timeRow}
       </div>

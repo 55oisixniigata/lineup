@@ -807,39 +807,65 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     return r === 1 ? `${s}トップ` : r === 2 ? `${s}2位` : r === 3 ? `${s}3位` : null;
   }
 
-  // ── 注目ポイント組み立て ──
+  // ── 注目ポイント組み立て（ナラティブ型）──
   const noteParts = [];
-
-  // Part1: チーム状況（直近対戦 + ホーム/アウェイ成績）
   const venue = gameInfo['球場'] || '';
   const isHome = venue.includes('新潟') || venue.includes('ハードオフ') || venue.includes('HARD OFF');
-  if (oisix) {
+
+  // 対戦相手の短縮名
+  const shortOpp = opponent
+    .replace(/^(北海道|東北|千葉|東京|埼玉|横浜|大阪|福岡|広島)/, '')
+    .replace(/(ファイターズ|イーグルス|マリーンズ|スワローズ|ジャイアンツ|ベイスターズ|ライオンズ|バファローズ|ホークス|ドラゴンズ|タイガース|カープ).*/, '');
+
+  // 直近の対戦結果
+  let lastVs = null;
+  if (rec && !rec.error && rec.lastGames && shortOpp) {
+    lastVs = [...rec.lastGames].reverse().find(g => g.opponent && g.opponent.includes(shortOpp));
+  }
+
+  // ── Sentence 1: 今日の一戦の文脈（対戦相手との戦績 + 直近結果）──
+  const h2wm = h2h ? h2h.match(/(\d+)勝(\d+)敗/) : null;
+  const h2wNum = h2wm ? parseInt(h2wm[1]) : 0;
+  const h2lNum = h2wm ? parseInt(h2wm[2]) : 0;
+
+  if (h2h && shortOpp) {
+    const balance = h2wNum - h2lNum;
+    const h2hCtx = balance < -1
+      ? `今季の${shortOpp}戦は${h2h}と苦手にしている相手`
+      : balance > 1
+        ? `今季の${shortOpp}戦は${h2h}と相性良く`
+        : `今季の${shortOpp}戦は${h2h}の互角の戦い`;
+    if (lastVs) {
+      const rText = lastVs.result === 'W'
+        ? `前回は${lastVs.oisixScore}−${lastVs.oppScore}で勝利した`
+        : lastVs.result === 'L'
+          ? `前回は${lastVs.oisixScore}−${lastVs.oppScore}で敗れた`
+          : '前回は引き分けに終わった';
+      const follow = lastVs.result === 'L' ? 'リベンジを狙う一戦だ。' : 'この勢いをつなぎたい。';
+      noteParts.push(`${h2hCtx}。${rText}だけに、${follow}`);
+    } else {
+      const follow = balance < -1 ? '今日こそ流れを変えたい。' : 'さらに白星を重ねたい一戦だ。';
+      noteParts.push(`${h2hCtx}。${follow}`);
+    }
+  } else if (lastVs) {
+    const rText = lastVs.result === 'W'
+      ? `前回の${shortOpp}戦は${lastVs.oisixScore}−${lastVs.oppScore}で勝利`
+      : lastVs.result === 'L'
+        ? `前回の${shortOpp}戦は${lastVs.oisixScore}−${lastVs.oppScore}で敗戦`
+        : `前回の${shortOpp}戦は引き分け`;
+    const follow = lastVs.result === 'L' ? '今日はその雪辱を果たしたい。' : '連勝で勢いに乗りたい。';
+    noteParts.push(`${rText}。${follow}`);
+  } else if (oisix) {
     const homeStr = isHome ? oisix.home : oisix.road;
     const hm = homeStr ? homeStr.match(/(\d+)-(\d+)/) : null;
     if (hm) {
       noteParts.push(isHome
-        ? `今季のホーム成績は${hm[1]}勝${hm[2]}敗。`
-        : `今季のアウェイ成績は${hm[1]}勝${hm[2]}敗。`);
+        ? `ホームに${shortOpp || opponent}を迎える一戦。今季のホーム成績は${hm[1]}勝${hm[2]}敗だ。`
+        : `今季のアウェイ成績は${hm[1]}勝${hm[2]}敗。敵地での白星を狙う。`);
     }
-  }
-  if (rec && !rec.error && rec.lastGames && opponent) {
-    const shortOpp = opponent
-      .replace(/^(北海道|東北|千葉|東京|埼玉|横浜|大阪|福岡|広島)/, '')
-      .replace(/(ファイターズ|イーグルス|マリーンズ|スワローズ|ジャイアンツ|ベイスターズ|ライオンズ|バファローズ|ホークス|ドラゴンズ|タイガース|カープ).*/, '');
-    const lastVs = [...rec.lastGames].reverse().find(g => g.opponent && g.opponent.includes(shortOpp));
-    if (lastVs) {
-      const rText = lastVs.result === 'W'
-        ? `${lastVs.oisixScore}−${lastVs.oppScore}で勝利`
-        : lastVs.result === 'L' ? `${lastVs.oisixScore}−${lastVs.oppScore}で敗戦` : '引き分け';
-      noteParts.push(`前回の${shortOpp}戦は${rText}。`);
-    } else if (h2hLine) {
-      noteParts.push(`${h2hLine}。`);
-    }
-  } else if (h2hLine) {
-    noteParts.push(`${h2hLine}。`);
   }
 
-  // Part2: 先発投手（チーム内順位付き）
+  // ── Sentence 2: 先発投手（勝敗のカギとして）──
   if (pitcherP) {
     if (pStat) {
       const pitchAll = (stats.pitching || []).filter(p => p.apps >= 5);
@@ -856,23 +882,22 @@ function buildHighlightsHtml(gameInfo, players, stats) {
       if (rankLabel(soRank,  soScope)  && pStat.so > 0)         pitchHighlights.push(`${rankLabel(soRank, soScope)}の${pStat.so}奪三振`);
       const recStr = `${pStat.wins}勝${pStat.losses}敗`;
       if (pitchHighlights.length > 0) {
-        noteParts.push(`先発は${pitcherP.name}（${recStr}）。${pitchHighlights.slice(0,2).join('、')}を誇る。`);
+        noteParts.push(`先発は${pitcherP.name}（${recStr}）。${pitchHighlights.slice(0,2).join('、')}を誇る右腕が今日の勝敗のカギを握る。`);
       } else {
-        const eraText = pStat.era !== '-.--' ? ` 防御率${pStat.era}` : '';
-        noteParts.push(`先発は${pitcherP.name}（${recStr}${eraText}）が登板。`);
+        const eraText = pStat.era !== '-.--' ? `防御率${pStat.era}` : '';
+        noteParts.push(`先発は${pitcherP.name}（${recStr}${eraText ? '、' + eraText : ''}）。${isHome ? '本拠地' : '敵地'}のマウンドで力投を見せたい。`);
       }
     } else {
-      noteParts.push(`先発は${pitcherP.name}が登板。`);
+      noteParts.push(`先発は${pitcherP.name}が今日のマウンドへ。序盤の主導権争いに注目だ。`);
     }
   }
 
-  // Part2: 注目打者（日付ローテ + チーム内順位付き）
+  // ── Sentence 3: 注目打者（観戦ポイントとして）──
   if (bStats.length > 0) {
     const idx = dateNum % bStats.length;
     const { p: fp, s: fs } = bStats[idx];
     const batAll = stats.batting || [];
     const batQual = batAll.filter(b => b.ab >= 20);
-    // リーグ順位を優先、なければチーム順位
     const hrRankL  = leagueRank(fp.name, stats, 'hr_rank');
     const rbiRankL = leagueRank(fp.name, stats, 'rbi_rank');
     const sbRankL  = leagueRank(fp.name, stats, 'sb_rank');
@@ -891,9 +916,8 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     if (rankLabel(sbRank,  sbScope)  && fs.sb  >= 3) batHighlights.push(`${rankLabel(sbRank,  sbScope)}の${fs.sb}盗塁`);
     if (rankLabel(avgRank, avgScope) && parseFloat(fs.avg) >= 0.240) batHighlights.push(`${rankLabel(avgRank, avgScope)}の打率${fs.avg}`);
     if (batHighlights.length > 0) {
-      noteParts.push(`打線では${fp.name}に注目。${batHighlights.slice(0,2).join('、')}を記録中だ。`);
+      noteParts.push(`打線では${fp.name}に注目。${batHighlights.slice(0,2).join('、')}を記録中で、一打が試合を動かす存在だ。`);
     } else {
-      // 条件未達でもチーム内で最上位の指標を見つけて理由を添える
       const tAvgRank = teamRank(fp.name, batQual, 'avg');
       const tHrRank  = teamRank(fp.name, batAll, 'hr');
       const tRbiRank = teamRank(fp.name, batAll, 'rbi');
@@ -904,21 +928,21 @@ function buildHighlightsHtml(gameInfo, players, stats) {
       if (tRbiRank && tRbiRank <= 5 && fs.rbi >= 1) fallback.push(`チーム打点${tRbiRank}位（${fs.rbi}打点）`);
       if (tSbRank  && tSbRank  <= 3 && fs.sb  >= 1) fallback.push(`チーム盗塁${tSbRank}位（${fs.sb}盗塁）`);
       if (fallback.length > 0) {
-        noteParts.push(`打線では${fp.name}に注目。${fallback[0]}を記録中だ。`);
+        noteParts.push(`打線では${fp.name}に注目。${fallback[0]}と安定した成績を残しており、ここぞの一打に期待がかかる。`);
       } else {
-        noteParts.push(`打線では${fp.name}（打率${fs.avg}、${fs.rbi}打点）の活躍に期待したい。`);
+        noteParts.push(`打線では${fp.name}（打率${fs.avg}）の一打がチームの流れを変えるポイントになりそうだ。`);
       }
     }
   }
 
-  // Part3: データ起因のコピーのみ（汎用コピーは出さない）
+  // ── Closing: 連勝/連敗文脈で締める ──
   if (rec && !rec.error) {
     if (streak && streak.count >= 3 && streak.type === 'W') {
-      noteParts.push(`${streak.count}連勝中。`);
+      noteParts.push(`${streak.count}連勝中の勢いで、今日もスタンドを沸かせたい。`);
     } else if (streak && streak.count >= 3 && streak.type === 'L') {
-      noteParts.push(`${streak.count}連敗中。反撃のきっかけをつかみたい。`);
+      noteParts.push(`${streak.count}連敗中。今日こそ流れを断ち切る一戦にしたい。`);
     } else if (monthRecord && monthRecord.wins > monthRecord.losses + 3) {
-      noteParts.push(`今月は${monthRecord.wins}勝${monthRecord.losses}敗と勝ち越しが続いている。`);
+      noteParts.push(`今月は${monthRecord.wins}勝${monthRecord.losses}敗と好調をキープ。このまま上位をうかがいたい。`);
     }
   }
 
@@ -1153,7 +1177,7 @@ function buildPlayerCard(p, orderLabel, isPitcher) {
 
   const pUrl = profileUrl(p.number);
   const profileHtml = pUrl
-    ? `<a class="profile-btn" href="${pUrl}">プロフィール ›</a>`
+    ? `<a class="profile-btn" href="${pUrl}">プロフィール詳細 ›</a>`
     : '';
 
   const bioHtml = bio ? `<div class="player-bio">${bio}</div>` : '';
@@ -1191,7 +1215,7 @@ const MANAGER = {
 function buildManagerCard() {
   const pUrl = profileUrl('38');
   const profileHtml = pUrl
-    ? `<a class="profile-btn" href="${pUrl}">プロフィール ›</a>`
+    ? `<a class="profile-btn" href="${pUrl}">プロフィール詳細 ›</a>`
     : '';
   const photoUrl = PHOTO_MAP['38']
     ? `https://drive.google.com/thumbnail?id=${PHOTO_MAP['38']}&sz=w400`
@@ -1240,7 +1264,7 @@ function render(gameInfo, players, stats) {
       : '';
     const pUrl = profileUrl(p.number);
     const profileHtml = pUrl
-      ? `<a class="profile-btn" href="${pUrl}">プロフィール ›</a>`
+      ? `<a class="profile-btn" href="${pUrl}">プロフィール詳細 ›</a>`
       : '';
     return `
       <div class="bench-card">

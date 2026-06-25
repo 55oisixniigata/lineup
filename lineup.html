@@ -516,17 +516,54 @@ function posName(val) {
 // ── 選手写真マップ（背番号 → Google Drive ファイルID）────────
 // ★ 新しい写真を追加するときは Drive のファイルIDをここに追加する
 const PHOTO_MAP = {
-  '0':  '1JF-67Pf_TLm_rNqiCd5mWQxXxRVVRF85', // 高
-  '5':  '1rmZ4w6PG58mrg-XWbafQWTPUGYCQoUdx', // 大川
-  '7':  '1HbMndsiKa6X4XiWNHGNqDirAXy0vWLba', // 園部
-  '9':  '1k5niXh0uc9f8Tciu1u__X4MGSimi_TO-', // 髙山
-  '17': '1h_v76PGg-r8q5-R7-H2iEnYbI_3y9pKH', // 宮森
-  '24': '1iTXhkoswmN_PT20gor3Hy8RaseJ5gCMo', // 上原
-  '25': '1UoW3ezEXBiWyVa2n9-FfA1ovoMSj2sFJ', // 小西
-  '35': '1BokonMDXIrGrRZJ81a5JLkIkXxanjWkc', // 中澤
-  '42': '1KvSlh-eRTMQY9n1GD0nU9HMmOU1lVZGr', // ウォーカー
-  '62': '1NRWgHactge-SqqTyQ91w6kQtMFnePYRg', // 楠田
-  '38': '1dQO65nLhg_HS9GN5StGZJfDGnm97w3zt', // 武田
+  '0':  '1CGbJvu1VZQnivLG37c2rCrVsBjiDPKI4', // 高 義博
+  '1':  '1I-zF9AAUMzGcxGDVsqW9fuN0WPnxNvGZ', // 楊 大康
+  '3':  '1zOU05c7Y1mzCxCy0fVxq70jOdG29JxeG', // 田中 俊太
+  '4':  '1c3kNvGjlr-ERBFzO6E9UwT3coqDuIYOW', // 漆原 大晟
+  '5':  '1Lea-87KBgDBk8PlL63zMszsGTFaNbanM', // 大川 陽大
+  '7':  '1TsOfVcK7qczK9M2KPmu3UZ4-RHljMcnn', // 園部 啓太
+  '8':  '1BcI8M5tPzloTpRX0JhpjQvexdz_UC0QQ', // 松山 龍平
+  '9':  '1XfhQ-RK7JYSMxTbzFOq9mUaf2TMXFxCA', // 髙山 峻
+  '11': '1oyf1_R9bKzTnxLMaQRS-bD7ll9VpUXjE', // 植村 友希
+  '12': '1i0mbHBOWPgedPu1VChrpSQTow2e9CWLm', // 山田 空
+  '15': '1kGC-jP1A3w1kOpwAPsXZfgbbZ-eVu9zd', // 西村 陸
+  '17': '1CfVZfbmVB9cO8AjkW_2t7E6w33Q1wSL6', // 宮森 智志
+  '19': '18m7UGu539OZa4DpMdg5EVbVrh6zCUAuY', // 又吉 克樹
+  '20': '117v5_3s4SqDfkj_rbDXi_Yzkh_dQ7OAC', // 井口 一朋
+  '23': '1KoKcwcYT5Tn79YD0YS9O6JhYKyTNZyvt', // 渡邊 諒
+  '24': '1Xng2B97VmY90cZsuVirVosyeoPOrksS4', // 上原 裕貴
+  '25': '1EYXHTfEeZn65RcxX-bHg8M_b0H8y9ncm', // 小西 慶嗣
+  '26': '1p2Gn4ptGiIkH6OPsK5JB7EGoKDU0-35o', // 山田 大河
+  '27': '1kbvzi3wcQ2fHRN48ZCuaCLndrqC8-67g', // ケンジ・パラレス
+  '28': '1G3_s33SCaViVMQUzhECBf51ExgEn1RSt', // 今井 良太
+  '29': '1u6CQhfVkeiOVW-Hd0n2HWMAABWscigeA', // 難波 周
+  '30': '1F2Fvk1fem3I9yC3v5-XjXBxZsaeFLil5', // 石田 良磨
+  '32': '1Vu1-_cnD4japKlkKUBIPh4zRTvohppU4', // 小薗 周也
+  '33': '1GIFdY4Kt0ljjC0PziR2loKNwb_LgD47H', // 万歳 大夢
+  '34': '1f__1Vc2KDgJXvXbphfw_-LwL5iKXurp0', // 伊礼 海斗
+  '35': '16ru1IY803OwVs3GP4X9d6ssjtTLtz19J', // 中澤 英明
+  '36': '1GtwyglXkjIWVOimax1_dGR6vd9enA264', // ダニエル・フライ
+  '37': '17Y8e6CyCPmefFK2ncF_qvDVbfiXVrEaQ', // 中山 渉太
+  '38': '1HhV1TxorEOIJz0Q3on97j8WFapFxoM5d', // 武田 勝
+  '39': '1nKmSH9cPC2owGc8sIsXF2niEF8a17pg_', // 田才 智瑛
+  '41': '1m2gnV385BKNv0848iDm6j4jHkyRBvg7T', // 鈴木 颯人
+  '42': '1jj0cDiDWyfE5dEbHWTxZf0bNomVFevg-', // アダム・ウォーカー
+  '43': '1OToX1SdeTBkrZlSYByVkF_a02Sgz4ocP', // 阿代 賢太
+  '44': '1C27EjpDlq6wAkKTOrSHPxGabhEFB6-TL', // 比嘉 天宇
+  '45': '1QFAlrfIg9VfENLiijz5jDNOIe0Ivrulw', // 髙野 裕
+  '46': '1iq-e4JT69IOm0_44cqCeBRWUfTQY23NS', // 高橋 春我
+  '47': '1iNdPkazHEAZqUoHqfbcLa600UEXqx160', // 笠原 祥太郎
+  '48': '1pAe2fadOGq2VhjuKG8Cm2VxJ-TaSUFuS', // 山下 一馬
+  '50': '1rb3IKTLBcjzmbl-envzK_7TSI5_1vft-', // 石山 義規
+  '51': '10p2waTZzXnI4vcl7MCVbzVd1YPlX5Hn3', // 石川 直哉
+  '52': '1zD_vE88MCY7oPu0_TbQ_lvnj2whwqGJZ', // 岸川 和博
+  '53': '1ecGr5SIDcUz66zk6UvDOzOmE6B3m_FhO', // 稲葉 空
+  '54': '1FTrrcf6cUagBmrQ-wjQtuf-74iZ-J3E0', // 細谷 涼
+  '55': '1PZK5WaRE7wInKHPUhFNXzWGK7cu4MF2e', // 浅井 怜央
+  '56': '1u-YA3hfBc7aj2XTd7tZNX7v1gQo_1IX6', // 是永 大造
+  '60': '101zky8_EtcUCIu1nsNS5CZOYQ3-xpK-G', // 大野 大輔
+  '62': '12Hykrx-LnfZHSoy2sjzBYtcsti1eAqNz', // 楠田 太郎
+  '92': '1ZNK8AqPNKIOB6mnah8zjC27PJ0fQwvJl', // 国吉 佑樹
 };
 function photoUrl(number) {
   const id = PHOTO_MAP[String(number)];

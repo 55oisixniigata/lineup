@@ -1247,7 +1247,8 @@ function renderWaiting() {
 function renderGameWithWaiting(gameInfo, players, stats) {
   const rawTime = gameInfo['試合開始'] || '';
   const timeStr = formatTime(rawTime);
-  let announceNote = '';
+  let announceTime = '';
+  let announceMsg = 'スタメンは試合開始15分前に発表します。';
   if (timeStr && timeStr.includes(':')) {
     const [h, m] = timeStr.split(':').map(Number);
     const gameStart = new Date();
@@ -1255,14 +1256,15 @@ function renderGameWithWaiting(gameInfo, players, stats) {
     const showAt = new Date(gameStart.getTime() - 15 * 60 * 1000);
     const sh = showAt.getHours();
     const sm = showAt.getMinutes().toString().padStart(2, '0');
-    announceNote = `<br><span style="color:#aaa;font-size:0.85em">${sh}:${sm} 頃発表予定</span>`;
+    announceTime = `${sh}:${sm}`;
+    announceMsg = `スタメンは ${sh}:${sm} 頃に発表予定です。`;
   }
   document.getElementById('app').innerHTML = `
     ${gameCardHtml(gameInfo, players, stats)}
     <div class="waiting-card" style="margin-top:16px">
-      <div class="waiting-emoji">⏳</div>
-      <div class="waiting-title">スタメン発表まであと少し！</div>
-      <div class="waiting-sub">試合開始15分前にこのページを更新してみてね。${announceNote}</div>
+      <div class="waiting-emoji">📋</div>
+      <div class="waiting-title">スタメン発表前です</div>
+      <div class="waiting-sub">${announceMsg}<br>発表後はページを更新してください。</div>
     </div>
   `;
 }

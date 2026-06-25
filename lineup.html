@@ -1263,8 +1263,8 @@ function renderGameWithWaiting(gameInfo, players, stats) {
     ${gameCardHtml(gameInfo, players, stats)}
     <div class="waiting-card" style="margin-top:16px">
       <div class="waiting-emoji">📋</div>
-      <div class="waiting-title">スタメン発表前です</div>
-      <div class="waiting-sub">${announceMsg}<br>発表後はページを更新してください。</div>
+      <div class="waiting-title">スタメン発表まであと少し！</div>
+      <div class="waiting-sub">${announceTime ? `${announceTime} 頃発表予定` : '試合開始15分前に発表予定'}<br>時間になったらページを更新してください。</div>
     </div>
   `;
 }

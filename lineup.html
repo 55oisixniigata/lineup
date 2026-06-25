@@ -556,7 +556,7 @@ const PHOTO_MAP = {
 };
 function photoUrl(number) {
   const id = PHOTO_MAP[String(number)];
-  return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w400` : null;
+  return id ? `https://lh3.googleusercontent.com/d/${id}=w400` : null;
 }
 
 // ── 選手紹介文マップ（TalentBook ストーリーID → 一言紹介）──
@@ -1326,7 +1326,7 @@ function buildManagerCard() {
     ? `<a class="profile-btn" href="${pUrl}">プロフィール詳細 ›</a>`
     : '';
   const photoUrl = PHOTO_MAP['38']
-    ? `https://drive.google.com/thumbnail?id=${PHOTO_MAP['38']}&sz=w400`
+    ? `https://lh3.googleusercontent.com/d/${PHOTO_MAP['38']}=w400`
     : null;
   const photoHtml = photoUrl
     ? `<img class="player-photo" src="${photoUrl}" alt="武田勝"

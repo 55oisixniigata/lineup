@@ -1434,10 +1434,12 @@ async function main() {
     const dateStr   = gameInfo['日付'] || '';
     const hasLineup = players.some(p => p.starter);
 
-    if (!isToday(dateStr)) {
-      renderWaiting();
-      return; // stats不要なので終了
-    } else if (!hasLineup || !isTimeToShowLineup(gameInfo['試合開始'])) {
+    // ▼▼▼ リリース時はここのコメントを外す（日付チェックを有効化）▼▼▼
+    // if (!isToday(dateStr)) {
+    //   renderWaiting();
+    //   return; // stats不要なので終了
+    // } else
+    if (!hasLineup || !isTimeToShowLineup(gameInfo['試合開始'])) {
       renderGameWithWaiting(gameInfo, players, null); // statsなしで即描画
     } else {
       render(gameInfo, players, null); // statsなしで即描画

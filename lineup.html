@@ -1418,16 +1418,18 @@ function showLoading() {
   app.appendChild(screen);
 }
 
-// ── メイン（プログレッシブ2フェーズ）────────────────────────
+// ── メイン（CSV・GAS並列取得）────────────────────────────────
 async function main() {
   showLoading();
-  let gameInfo, players;
 
-  // ── Phase 1: CSVだけ先取得してすぐ描画 ──
+  // CSV と GAS を同時並行でリクエスト開始
+  const csvPromise   = fetch(CSV_URL).then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.text(); });
+  const statsPromise = fetchNpbStats().catch(() => null); // エラーはサイレント
+
+  // ── Phase 1: CSV完了次第すぐ描画 ──
+  let gameInfo, players;
   try {
-    const csvRes = await fetch(CSV_URL);
-    if (!csvRes.ok) throw new Error(`HTTP ${csvRes.status}`);
-    const text = await csvRes.text();
+    const text = await csvPromise;
     const rows = parseCSV(text);
     ({ gameInfo, players } = parseData(rows));
 
@@ -1454,9 +1456,9 @@ async function main() {
     return;
   }
 
-  // ── Phase 2: GAS stats をバックグラウンド取得 → HIGHLIGHTSだけ差し替え ──
+  // ── Phase 2: GASが返ってきたら（並列取得済み）Highlightsだけ差し替え ──
   try {
-    const stats = await fetchNpbStats();
+    const stats = await statsPromise;
     if (!stats) return;
     const hlEl = document.querySelector('.highlights-card');
     if (!hlEl) return;

@@ -385,6 +385,17 @@
 
     /* ── フッター ── */
     .footer { text-align: center; padding: 20px 16px 32px; font-size: 11px; color: #aaa; }
+    .guide-link {
+      display: flex; align-items: center; gap: 12px;
+      margin: 20px 16px 0; padding: 14px 18px;
+      background: #015095; color: #fff; border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(1,80,149,.3);
+    }
+    .guide-link-text { flex: 1; }
+    .guide-link-text b { display: block; font-size: 15px; font-weight: 700; }
+    .guide-link-text small { display: block; font-size: 11px; opacity: .85; margin-top: 2px; }
+    .guide-link-arrow { font-size: 18px; font-weight: 700; }
 
     /* ── ローディング / エラー ── */
     .status-msg { text-align: center; padding: 40px 20px; color: #888; font-size: 14px; }
@@ -478,6 +489,12 @@
 
 <div id="app"></div>
 
+
+<a class="guide-link" href="https://55oisixniigata.github.io/ballpark-guide/">
+  <span>🏟️</span>
+  <span class="guide-link-text"><b>球場ガイドはこちら</b><small>イベント・グルメ・引き換え情報</small></span>
+  <span class="guide-link-arrow">→</span>
+</a>
 
 <div class="footer">
   <div>オイシックス新潟アルビレックスBC</div>

@@ -939,7 +939,7 @@ function buildHighlightsHtml(gameInfo, players, stats) {
   }
 
   // ── Sentence 1: 今日の一戦の文脈（対戦相手との戦績 + 直近結果）──
-  const h2wm = h2h ? h2h.match(/(\d+)勝(\d+)敗/) : null;
+  const h2wm = h2h ? (h2h.match(/(\d+)勝(\d+)敗/) || h2h.match(/(\d+)[^\d](\d+)/)) : null;
   const h2wNum = h2wm ? parseInt(h2wm[1]) : 0;
   const h2lNum = h2wm ? parseInt(h2wm[2]) : 0;
 

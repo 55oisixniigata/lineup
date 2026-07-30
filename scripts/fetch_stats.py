@@ -260,7 +260,7 @@ def aggregate_batting(games_stats, names, n=5):
                 rbi += s.get("rbi", 0); g += 1
         if g > 0 and ab > 0:
             result[name] = {"games": g, "ab": ab, "h": h, "rbi": rbi,
-                            "avg": f"{h/ab:.3f}"}
+                            "avg": f"{h/ab:.3f}".lstrip("0")}
     return result
 
 def aggregate_pitching(games_stats, names, n=3):
@@ -328,7 +328,7 @@ def main():
 
     print("6. ボックススコア取得中（直近5試合）...")
     games_stats = []
-    for g in recent_games[:5]:
+    for g in recent_games[:8]:
         print(f"   {g['date']} vs {g['opponent']}...", end=" ", flush=True)
         b, p = scrape_box(g, all_oisix_names)
         games_stats.append({"batting": b, "pitching": p})

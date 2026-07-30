@@ -794,7 +794,7 @@ function findH2H(opponent, headToHead) {
 }
 
 // ── 見どころHTML生成 ────────────────────────────────────────
-function buildHighlightsHtml(gameInfo, players, stats) {
+function buildHighlightsHtml(gameInfo, players, stats, waitingMode = false) {
   if (!stats || stats.error) {
     return `<div class="highlights-card">
       <div class="highlights-eyebrow">GAME HIGHLIGHTS</div>
@@ -803,8 +803,9 @@ function buildHighlightsHtml(gameInfo, players, stats) {
   }
 
   const opponent  = gameInfo['対戦相手'] || '';
-  const { oisix, headToHead } = stats.standings || {};
-  const pitcherP  = players.find(p => p.pitcher);
+  const oisix      = stats.oisix      || null;
+  const headToHead = stats.headToHead || {};
+  const pitcherP  = waitingMode ? null : players.find(p => p.pitcher);
   const starterPs = players.filter(p => p.starter && !p.pitcher);
 
   // 先発投手の成績
@@ -885,7 +886,8 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     const ml = monthRecord ? monthRecord.losses : 0;
     const mt = monthRecord ? monthRecord.ties   : 0;
     const monthLabel = mw > ml ? '勝ち越し' : mw < ml ? '負け越し' : '同率';
-    monthHtml = `${rec.month}月 <strong>${mw}勝${ml}敗${mt > 0 ? mt+'分' : ''}</strong>（${monthLabel}）`;
+    const monthNum = rec.month || (stats.updated ? parseInt(stats.updated.split('-')[1]) : new Date().getMonth() + 1);
+    monthHtml = `${monthNum}月 <strong>${mw}勝${ml}敗${mt > 0 ? mt+'分' : ''}</strong>（${monthLabel}）`;
   }
 
   // 直近成績行
@@ -1221,7 +1223,7 @@ function formatDate(str) {
 }
 
 // ── 試合カードHTML（共通） ────────────────────────────────────
-function gameCardHtml(gameInfo, players, stats) {
+function gameCardHtml(gameInfo, players, stats, waitingMode = false) {
   const opponent  = gameInfo['対戦相手'] || '—';
   const teamColor = TEAM_COLORS[opponent] || '#0B2363';
   const gameDate  = gameInfo['日付'] ? formatDate(gameInfo['日付']) : '—';
@@ -1230,7 +1232,7 @@ function gameCardHtml(gameInfo, players, stats) {
   const venueRow  = venue    ? `<div class="game-meta-row"><span class="game-meta-icon">🏟️</span>${venue}</div>` : '';
   const timeRow   = gameTime ? `<div class="game-meta-row"><span class="game-meta-icon">⏰</span>${gameTime} 試合開始</div>` : '';
   const highlightsHtml = players
-    ? buildHighlightsHtml(gameInfo, players, stats || null)
+    ? buildHighlightsHtml(gameInfo, players, stats || null, waitingMode)
     : '';
   return `
     <div class="game-card">
@@ -1287,7 +1289,7 @@ function renderGameWithWaiting(gameInfo, players, stats) {
     announceMsg = `スタメンは ${sh}:${sm} 頃に発表予定です。`;
   }
   document.getElementById('app').innerHTML = `
-    ${gameCardHtml(gameInfo, players, stats)}
+    ${gameCardHtml(gameInfo, players, stats, true)}
     <div class="waiting-card" style="margin-top:16px">
       <div class="waiting-emoji">📋</div>
       <div class="waiting-title">スタメン発表まであと少し！</div>

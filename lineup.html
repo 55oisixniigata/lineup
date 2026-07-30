@@ -502,7 +502,8 @@
 
 <script>
 const CSV_URL   = 'https://script.google.com/macros/s/AKfycbwMkya55qhQHBNBxsanR9JuKTjCQ3C6avHqE0YqRh0-jCZcFBTsrwuldi3zV5YT_R7e/exec';
-const STATS_URL = CSV_URL + '?mode=stats';
+// ★ GitHub Actions が毎朝自動生成する静的 JSON に切り替え（GAS より高速）
+const STATS_URL = 'https://55oisixniigata.github.io/lineup/stats.json';
 
 // ── 守備位置番号マップ（数字 → 表示名）──────────────────────
 // スプシのB列に番号を入力した場合に変換。テキストのまま入力しても動く
@@ -741,7 +742,7 @@ function bioText(tbUrl, number) {
 }
 
 // ── NPB成績取得（30分キャッシュ）─────────────────────────────
-const STATS_CACHE_KEY = 'npb_stats_v1';
+const STATS_CACHE_KEY = 'lineup_stats_v2'; // v2: 静的JSONに切り替え（GASから移行）
 const STATS_CACHE_TTL = 30 * 60 * 1000; // 30分
 
 async function fetchNpbStats() {
@@ -996,7 +997,16 @@ function buildHighlightsHtml(gameInfo, players, stats) {
       if (rankLabel(eraRank, eraScope) && pStat.era !== '-.--') pitchHighlights.push(`${rankLabel(eraRank, eraScope)}の防御率${pStat.era}`);
       if (rankLabel(soRank,  soScope)  && pStat.so > 0)         pitchHighlights.push(`${rankLabel(soRank, soScope)}の${pStat.so}奪三振`);
       const recStr = `${pStat.wins}勝${pStat.losses}敗`;
-      if (pitchHighlights.length > 0) {
+      // 直近登板データがあれば優先表示
+      if (pStat.recent) {
+        const r = pStat.recent;
+        const rEra = r.era && r.era !== '-.--' ? `防御率<span class="highlights-stat">${r.era}</span>` : '';
+        const rSo  = r.so > 0 ? `${r.so}奪三振` : '';
+        const rParts = [rEra, rSo].filter(Boolean).join('・');
+        const rAdj = parseFloat(r.era) <= 2.00 ? '絶好調。' : parseFloat(r.era) <= 3.50 ? '安定している。' : '登板を重ねている。';
+        const rLine = rParts ? `直近${r.apps}登板で${rParts}と${rAdj}` : `直近${r.apps}登板に登板し${rAdj}`;
+        noteParts.push(`先発は${pitcherP.name}（今季${recStr}）。${rLine}今日のマウンドに注目だ。`);
+      } else if (pitchHighlights.length > 0) {
         noteParts.push(`先発は${pitcherP.name}（${recStr}）。${pitchHighlights.slice(0,2).join('、')}を誇る右腕が今日の勝敗のカギを握る。`);
       } else {
         const eraText = pStat.era !== '-.--' ? `防御率${pStat.era}` : '';
@@ -1030,7 +1040,17 @@ function buildHighlightsHtml(gameInfo, players, stats) {
     if (rankLabel(rbiRank, rbiScope) && fs.rbi >= 5) batHighlights.push(`${rankLabel(rbiRank, rbiScope)}の${fs.rbi}打点`);
     if (rankLabel(sbRank,  sbScope)  && fs.sb  >= 3) batHighlights.push(`${rankLabel(sbRank,  sbScope)}の${fs.sb}盗塁`);
     if (rankLabel(avgRank, avgScope) && parseFloat(fs.avg) >= 0.240) batHighlights.push(`${rankLabel(avgRank, avgScope)}の打率${fs.avg}`);
-    if (batHighlights.length > 0) {
+    // 直近試合データがあれば優先表示
+    if (fs.recent) {
+      const r = fs.recent;
+      const rAvgVal = parseFloat(r.avg);
+      const rAdj = rAvgVal >= 0.350 ? '絶好調' : rAvgVal >= 0.280 ? '好調' : '出場';
+      const rbiStr = r.rbi > 0 ? `${r.rbi}打点` : '';
+      const suffix = batHighlights.length > 0
+        ? `今季${batHighlights.slice(0,1).join('、')}を記録するなど、ここぞの一打に期待がかかる。`
+        : `ここぞの場面での一打に期待がかかる。`;
+      noteParts.push(`打線では${fp.name}に注目。直近${r.games}試合で打率<span class="highlights-stat">${r.avg}</span>（${r.h}安打${rbiStr ? '・' + rbiStr : ''}）と${rAdj}。${suffix}`);
+    } else if (batHighlights.length > 0) {
       noteParts.push(`打線では${fp.name}に注目。${batHighlights.slice(0,2).join('、')}を記録中で、一打が試合を動かす存在だ。`);
     } else {
       const tAvgRank = teamRank(fp.name, batQual, 'avg');

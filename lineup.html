@@ -793,6 +793,14 @@ function findH2H(opponent, headToHead) {
   return key ? headToHead[key] : null;
 }
 
+// "2-10" → "2勝10敗"、"5-6(1)" → "5勝6敗1分"
+function formatH2H(h2h) {
+  if (!h2h) return h2h;
+  const m = h2h.match(/^(\d+)-(\d+)(?:\((\d+)\))?/);
+  if (!m) return h2h;
+  return `${m[1]}勝${m[2]}敗${m[3] ? m[3] + '分' : ''}`;
+}
+
 // ── 見どころHTML生成 ────────────────────────────────────────
 function buildHighlightsHtml(gameInfo, players, stats, waitingMode = false) {
   if (!stats || stats.error) {
@@ -829,7 +837,7 @@ function buildHighlightsHtml(gameInfo, players, stats, waitingMode = false) {
 
   // ── 対戦成績 ──
   const h2h = findH2H(opponent, headToHead);
-  const h2hLine = h2h && opponent ? `今季の${opponent}戦は${h2h}` : '';
+  const h2hLine = h2h && opponent ? `今季の${opponent}戦は${formatH2H(h2h)}` : '';
 
   // ── 先発投手テキスト ──
   let pitcherLine = '';
@@ -948,11 +956,12 @@ function buildHighlightsHtml(gameInfo, players, stats, waitingMode = false) {
 
   if (h2h && shortOpp) {
     const balance = h2wNum - h2lNum;
+    const h2hFmt = formatH2H(h2h);
     const h2hCtx = balance < -1
-      ? `今季の${shortOpp}戦は${h2h}と苦手にしている相手`
+      ? `今季の${shortOpp}戦は${h2hFmt}と苦手にしている相手`
       : balance > 1
-        ? `今季の${shortOpp}戦は${h2h}と相性良く`
-        : `今季の${shortOpp}戦は${h2h}の互角の戦い`;
+        ? `今季の${shortOpp}戦は${h2hFmt}と相性良く`
+        : `今季の${shortOpp}戦は${h2hFmt}の互角の戦い`;
     if (lastVs) {
       const rText = lastVs.result === 'W'
         ? `前回は${lastVs.oisixScore}−${lastVs.oppScore}で勝利した`

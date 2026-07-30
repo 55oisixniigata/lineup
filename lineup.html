@@ -1510,8 +1510,9 @@ async function main() {
     if (!stats) return;
     const hlEl = document.querySelector('.highlights-card');
     if (!hlEl) return;
+    const isWaiting = !players.some(p => p.starter) || !isTimeToShowLineup(gameInfo['試合開始']);
     const tmp = document.createElement('div');
-    tmp.innerHTML = buildHighlightsHtml(gameInfo, players, stats);
+    tmp.innerHTML = buildHighlightsHtml(gameInfo, players, stats, isWaiting);
     hlEl.replaceWith(tmp.firstElementChild);
   } catch (_) {
     // stats失敗はサイレント（ラインナップは表示済み）

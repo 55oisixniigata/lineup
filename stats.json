@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-02",
+  "updated": "2026-08-03",
   "oisix": {
     "rank": 5,
     "wins": 33,
@@ -24,10 +24,10 @@
       "rbi": 32,
       "sb": 3,
       "recent": {
-        "games": 5,
-        "ab": 20,
-        "h": 5,
-        "rbi": 2,
+        "games": 4,
+        "ab": 16,
+        "h": 4,
+        "rbi": 1,
         "avg": ".250"
       }
     },
@@ -39,8 +39,8 @@
       "rbi": 27,
       "sb": 4,
       "recent": {
-        "games": 3,
-        "ab": 7,
+        "games": 2,
+        "ab": 2,
         "h": 0,
         "rbi": 0,
         "avg": ".000"
@@ -56,9 +56,9 @@
       "recent": {
         "games": 5,
         "ab": 18,
-        "h": 7,
+        "h": 6,
         "rbi": 4,
-        "avg": ".389"
+        "avg": ".333"
       }
     },
     {
@@ -70,10 +70,10 @@
       "sb": 40,
       "recent": {
         "games": 5,
-        "ab": 20,
+        "ab": 19,
         "h": 6,
-        "rbi": 2,
-        "avg": ".300"
+        "rbi": 1,
+        "avg": ".316"
       }
     }
   ],
@@ -88,11 +88,11 @@
       "ip": "75.1",
       "so": 44,
       "recent": {
-        "apps": 1,
-        "ip": "5.0",
+        "apps": 2,
+        "ip": "12.0",
         "er": 7,
-        "so": 1,
-        "era": "12.60"
+        "so": 8,
+        "era": "5.25"
       }
     },
     {
@@ -148,17 +148,20 @@
     }
   },
   "recent": {
-    "streak": {
-      "type": "L",
-      "count": 2
-    },
+    "streak": null,
     "monthRecord": {
-      "wins": 0,
+      "wins": 1,
       "losses": 1,
       "ties": 0
     },
-    "recent5": "LLWLW",
+    "recent5": "WLLWL",
     "lastGames": [
+      {
+        "opponent": "日本ハム",
+        "oisixScore": 5,
+        "oppScore": 1,
+        "result": "W"
+      },
       {
         "opponent": "日本ハム",
         "oisixScore": 2,
@@ -199,12 +202,6 @@
         "opponent": "西武",
         "oisixScore": 2,
         "oppScore": 8,
-        "result": "L"
-      },
-      {
-        "opponent": "西武",
-        "oisixScore": 3,
-        "oppScore": 5,
         "result": "L"
       }
     ]

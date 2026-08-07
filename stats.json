@@ -3,10 +3,10 @@
   "oisix": {
     "rank": 5,
     "wins": 34,
-    "losses": 49,
+    "losses": 50,
     "ties": 3,
-    "pct": ".410",
-    "home": "17-19(2)",
+    "pct": ".405",
+    "home": "17-20(2)",
     "road": "17-30(1)"
   },
   "headToHead": {
@@ -17,26 +17,11 @@
   },
   "batting": [
     {
-      "name": "小西慶治",
-      "avg": ".266",
-      "ab": 290,
-      "hr": 8,
-      "rbi": 41,
-      "sb": 7,
-      "recent": {
-        "games": 5,
-        "ab": 19,
-        "h": 5,
-        "rbi": 1,
-        "avg": ".263"
-      }
-    },
-    {
       "name": "大川陽大",
-      "avg": ".263",
-      "ab": 259,
+      "avg": ".262",
+      "ab": 263,
       "hr": 4,
-      "rbi": 35,
+      "rbi": 36,
       "sb": 3,
       "recent": {
         "games": 4,
@@ -47,9 +32,24 @@
       }
     },
     {
+      "name": "小西慶治",
+      "avg": ".262",
+      "ab": 294,
+      "hr": 8,
+      "rbi": 42,
+      "sb": 7,
+      "recent": {
+        "games": 5,
+        "ab": 19,
+        "h": 5,
+        "rbi": 1,
+        "avg": ".263"
+      }
+    },
+    {
       "name": "園部佳太",
       "avg": ".262",
-      "ab": 206,
+      "ab": 210,
       "hr": 1,
       "rbi": 29,
       "sb": 4,
@@ -64,7 +64,7 @@
     {
       "name": "高義博",
       "avg": ".256",
-      "ab": 266,
+      "ab": 270,
       "hr": 4,
       "rbi": 24,
       "sb": 40,
@@ -114,17 +114,17 @@
     }
   ],
   "leagueRanks": {
-    "小西慶治": {
-      "avg_rank": 4,
-      "hr_rank": 2,
-      "rbi_rank": 1,
-      "sb_rank": 4
-    },
     "大川陽大": {
-      "avg_rank": 5,
+      "avg_rank": 4,
       "hr_rank": 5,
       "rbi_rank": 2,
       "sb_rank": 6
+    },
+    "小西慶治": {
+      "avg_rank": 5,
+      "hr_rank": 2,
+      "rbi_rank": 1,
+      "sb_rank": 4
     },
     "園部佳太": {
       "avg_rank": 6,

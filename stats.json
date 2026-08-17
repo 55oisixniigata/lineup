@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-16",
+  "updated": "2026-08-17",
   "oisix": {
     "rank": 5,
     "wins": 36,
@@ -25,10 +25,10 @@
       "sb": 7,
       "recent": {
         "games": 5,
-        "ab": 15,
+        "ab": 16,
         "h": 4,
         "rbi": 0,
-        "avg": ".267"
+        "avg": ".250"
       }
     },
     {
@@ -40,10 +40,10 @@
       "sb": 5,
       "recent": {
         "games": 4,
-        "ab": 14,
+        "ab": 11,
         "h": 3,
         "rbi": 0,
-        "avg": ".214"
+        "avg": ".273"
       }
     },
     {
@@ -55,10 +55,10 @@
       "sb": 42,
       "recent": {
         "games": 5,
-        "ab": 21,
+        "ab": 20,
         "h": 3,
         "rbi": 0,
-        "avg": ".143"
+        "avg": ".150"
       }
     },
     {
@@ -70,10 +70,10 @@
       "sb": 4,
       "recent": {
         "games": 4,
-        "ab": 10,
+        "ab": 9,
         "h": 1,
-        "rbi": 2,
-        "avg": ".100"
+        "rbi": 1,
+        "avg": ".111"
       }
     }
   ],
@@ -98,11 +98,11 @@
       "ip": "82.2",
       "so": 48,
       "recent": {
-        "apps": 1,
-        "ip": "4.1",
-        "er": 10,
-        "so": 2,
-        "era": "20.77"
+        "apps": 2,
+        "ip": "7.1",
+        "er": 13,
+        "so": 4,
+        "era": "15.95"
       }
     }
   ],
@@ -141,14 +141,23 @@
     }
   },
   "recent": {
-    "streak": null,
+    "streak": {
+      "type": "L",
+      "count": 2
+    },
     "monthRecord": {
-      "wins": 3,
-      "losses": 7,
+      "wins": 2,
+      "losses": 8,
       "ties": 0
     },
-    "recent5": "LWLLW",
+    "recent5": "LLWLL",
     "lastGames": [
+      {
+        "opponent": "巨人",
+        "oisixScore": 0,
+        "oppScore": 9,
+        "result": "L"
+      },
       {
         "opponent": "巨人",
         "oisixScore": 4,
@@ -189,12 +198,6 @@
         "opponent": "西武",
         "oisixScore": 3,
         "oppScore": 6,
-        "result": "L"
-      },
-      {
-        "opponent": "西武",
-        "oisixScore": 2,
-        "oppScore": 7,
         "result": "L"
       }
     ]

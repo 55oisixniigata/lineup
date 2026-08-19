@@ -1,12 +1,12 @@
 {
-  "updated": "2026-08-18",
+  "updated": "2026-08-19",
   "oisix": {
     "rank": 5,
-    "wins": 36,
+    "wins": 37,
     "losses": 57,
     "ties": 3,
-    "pct": ".387",
-    "home": "18-25(2)",
+    "pct": ".394",
+    "home": "19-25(2)",
     "road": "18-32(1)"
   },
   "headToHead": {
@@ -18,17 +18,17 @@
   "batting": [
     {
       "name": "小西慶治",
-      "avg": ".267",
-      "ab": 322,
+      "avg": ".273",
+      "ab": 326,
       "hr": 8,
       "rbi": 44,
       "sb": 7,
       "recent": {
         "games": 5,
         "ab": 16,
-        "h": 4,
+        "h": 5,
         "rbi": 0,
-        "avg": ".250"
+        "avg": ".312"
       }
     },
     {
@@ -40,40 +40,25 @@
       "sb": 5,
       "recent": {
         "games": 4,
-        "ab": 11,
-        "h": 3,
+        "ab": 9,
+        "h": 2,
         "rbi": 0,
-        "avg": ".273"
+        "avg": ".222"
       }
     },
     {
       "name": "高義博",
       "avg": ".252",
-      "ab": 305,
+      "ab": 309,
       "hr": 4,
       "rbi": 24,
       "sb": 42,
       "recent": {
         "games": 5,
         "ab": 20,
-        "h": 3,
+        "h": 2,
         "rbi": 0,
-        "avg": ".150"
-      }
-    },
-    {
-      "name": "園部佳太",
-      "avg": ".248",
-      "ab": 226,
-      "hr": 1,
-      "rbi": 31,
-      "sb": 4,
-      "recent": {
-        "games": 4,
-        "ab": 9,
-        "h": 1,
-        "rbi": 1,
-        "avg": ".111"
+        "avg": ".100"
       }
     }
   ],
@@ -122,14 +107,8 @@
     "高義博": {
       "avg_rank": 6,
       "hr_rank": 7,
-      "rbi_rank": 8,
+      "rbi_rank": 7,
       "sb_rank": 1
-    },
-    "園部佳太": {
-      "avg_rank": 7,
-      "hr_rank": 8,
-      "rbi_rank": 4,
-      "sb_rank": 6
     },
     "宮森智志": {
       "era_rank": 1,
@@ -143,15 +122,21 @@
   "recent": {
     "streak": {
       "type": "L",
-      "count": 2
+      "count": 3
     },
     "monthRecord": {
       "wins": 2,
       "losses": 8,
       "ties": 0
     },
-    "recent5": "LLWLL",
+    "recent5": "LLLWL",
     "lastGames": [
+      {
+        "opponent": "中日",
+        "oisixScore": 3,
+        "oppScore": 5,
+        "result": "L"
+      },
       {
         "opponent": "巨人",
         "oisixScore": 0,
@@ -192,12 +177,6 @@
         "opponent": "西武",
         "oisixScore": 2,
         "oppScore": 11,
-        "result": "L"
-      },
-      {
-        "opponent": "西武",
-        "oisixScore": 3,
-        "oppScore": 6,
         "result": "L"
       }
     ]

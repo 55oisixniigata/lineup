@@ -1,13 +1,13 @@
 {
-  "updated": "2026-09-02",
+  "updated": "2026-09-03",
   "oisix": {
     "rank": 5,
     "wins": 40,
-    "losses": 63,
+    "losses": 64,
     "ties": 3,
-    "pct": ".388",
+    "pct": ".385",
     "home": "19-26(2)",
-    "road": "21-37(1)"
+    "road": "21-38(1)"
   },
   "headToHead": {
     "日本ハム": "4-14",
@@ -18,10 +18,10 @@
   "batting": [
     {
       "name": "小西慶治",
-      "avg": ".273",
-      "ab": 363,
-      "hr": 9,
-      "rbi": 49,
+      "avg": ".272",
+      "ab": 367,
+      "hr": 10,
+      "rbi": 50,
       "sb": 8,
       "recent": {
         "games": 5,
@@ -33,61 +33,51 @@
     },
     {
       "name": "大川陽大",
-      "avg": ".271",
-      "ab": 314,
+      "avg": ".268",
+      "ab": 317,
       "hr": 5,
       "rbi": 39,
       "sb": 6,
       "recent": {
         "games": 4,
         "ab": 16,
-        "h": 4,
-        "rbi": 0,
-        "avg": ".250"
+        "h": 5,
+        "rbi": 2,
+        "avg": ".312"
       }
     },
     {
       "name": "高義博",
-      "avg": ".248",
-      "ab": 335,
+      "avg": ".246",
+      "ab": 338,
       "hr": 4,
       "rbi": 26,
       "sb": 45,
       "recent": {
         "games": 3,
-        "ab": 10,
-        "h": 1,
+        "ab": 11,
+        "h": 3,
         "rbi": 0,
-        "avg": ".100"
+        "avg": ".273"
       }
     },
     {
       "name": "園部佳太",
       "avg": ".243",
-      "ab": 251,
-      "hr": 2,
-      "rbi": 33,
+      "ab": 255,
+      "hr": 3,
+      "rbi": 34,
       "sb": 5,
       "recent": {
         "games": 5,
-        "ab": 14,
+        "ab": 15,
         "h": 2,
-        "rbi": 1,
-        "avg": ".143"
+        "rbi": 0,
+        "avg": ".133"
       }
     }
   ],
   "pitching": [
-    {
-      "name": "宮森智志",
-      "era": "4.36",
-      "apps": 17,
-      "wins": 5,
-      "losses": 5,
-      "saves": 0,
-      "ip": "84.2",
-      "so": 63
-    },
     {
       "name": "笠原祥太郎",
       "era": "4.43",
@@ -115,11 +105,11 @@
       "ip": "88.1",
       "so": 44,
       "recent": {
-        "apps": 1,
-        "ip": "6.0",
-        "er": 0,
-        "so": 2,
-        "era": "0.00"
+        "apps": 2,
+        "ip": "12.0",
+        "er": 2,
+        "so": 5,
+        "era": "1.50"
       }
     }
   ],
@@ -148,31 +138,30 @@
       "rbi_rank": 5,
       "sb_rank": 6
     },
-    "宮森智志": {
+    "笠原祥太郎": {
       "era_rank": 1,
       "so_rank": 2
     },
-    "笠原祥太郎": {
+    "南波秀": {
       "era_rank": 2,
       "so_rank": 3
-    },
-    "南波秀": {
-      "era_rank": 3,
-      "so_rank": 4
     }
   },
   "recent": {
-    "streak": {
-      "type": "L",
-      "count": 2
-    },
+    "streak": null,
     "monthRecord": {
-      "wins": 0,
+      "wins": 1,
       "losses": 1,
       "ties": 0
     },
-    "recent5": "LLWLL",
+    "recent5": "WLLWL",
     "lastGames": [
+      {
+        "opponent": "ハヤテ",
+        "oisixScore": 9,
+        "oppScore": 7,
+        "result": "W"
+      },
       {
         "opponent": "ハヤテ",
         "oisixScore": 0,
@@ -214,12 +203,6 @@
         "oisixScore": 11,
         "oppScore": 2,
         "result": "W"
-      },
-      {
-        "opponent": "中日",
-        "oisixScore": 2,
-        "oppScore": 4,
-        "result": "L"
       }
     ]
   }

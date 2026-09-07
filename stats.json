@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-06",
+  "updated": "2026-09-07",
   "oisix": {
     "rank": 5,
     "wins": 41,
@@ -25,10 +25,10 @@
       "sb": 9,
       "recent": {
         "games": 5,
-        "ab": 20,
+        "ab": 19,
         "h": 2,
         "rbi": 1,
-        "avg": ".100"
+        "avg": ".105"
       }
     },
     {
@@ -40,10 +40,10 @@
       "sb": 6,
       "recent": {
         "games": 5,
-        "ab": 18,
+        "ab": 16,
         "h": 5,
         "rbi": 2,
-        "avg": ".278"
+        "avg": ".312"
       }
     },
     {
@@ -56,9 +56,9 @@
       "recent": {
         "games": 5,
         "ab": 19,
-        "h": 4,
+        "h": 5,
         "rbi": 4,
-        "avg": ".211"
+        "avg": ".263"
       }
     },
     {
@@ -151,11 +151,17 @@
     "streak": null,
     "monthRecord": {
       "wins": 2,
-      "losses": 3,
+      "losses": 4,
       "ties": 0
     },
-    "recent5": "WLLWL",
+    "recent5": "LWLLW",
     "lastGames": [
+      {
+        "opponent": "西武",
+        "oisixScore": 0,
+        "oppScore": 10,
+        "result": "L"
+      },
       {
         "opponent": "西武",
         "oisixScore": 6,
@@ -197,12 +203,6 @@
         "oisixScore": 4,
         "oppScore": 1,
         "result": "W"
-      },
-      {
-        "opponent": "日本ハム",
-        "oisixScore": 3,
-        "oppScore": 15,
-        "result": "L"
       }
     ]
   }

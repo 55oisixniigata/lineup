@@ -1,34 +1,34 @@
 {
-  "updated": "2026-09-12",
+  "updated": "2026-09-13",
   "oisix": {
     "rank": 5,
     "wins": 42,
-    "losses": 66,
+    "losses": 67,
     "ties": 3,
-    "pct": ".389",
+    "pct": ".385",
     "home": "20-28(2)",
-    "road": "22-38(1)"
+    "road": "22-39(1)"
   },
   "headToHead": {
     "日本ハム": "4-14",
-    "楽天": "9-7",
+    "楽天": "9-8",
     "ロッテ": "5-12",
     "ヤクルト": "5-6(1)"
   },
   "batting": [
     {
       "name": "小西慶治",
-      "avg": ".270",
-      "ab": 381,
+      "avg": ".273",
+      "ab": 385,
       "hr": 11,
       "rbi": 53,
       "sb": 9,
       "recent": {
         "games": 5,
-        "ab": 19,
-        "h": 2,
-        "rbi": 1,
-        "avg": ".105"
+        "ab": 18,
+        "h": 4,
+        "rbi": 4,
+        "avg": ".222"
       }
     },
     {
@@ -40,40 +40,40 @@
       "sb": 6,
       "recent": {
         "games": 5,
-        "ab": 16,
-        "h": 5,
-        "rbi": 2,
-        "avg": ".312"
-      }
-    },
-    {
-      "name": "高義博",
-      "avg": ".242",
-      "ab": 355,
-      "hr": 4,
-      "rbi": 26,
-      "sb": 45,
-      "recent": {
-        "games": 5,
-        "ab": 20,
-        "h": 4,
+        "ab": 15,
+        "h": 2,
         "rbi": 0,
-        "avg": ".200"
+        "avg": ".133"
       }
     },
     {
       "name": "園部佳太",
       "avg": ".241",
-      "ab": 270,
+      "ab": 274,
       "hr": 3,
       "rbi": 37,
       "sb": 5,
       "recent": {
         "games": 5,
         "ab": 19,
-        "h": 5,
+        "h": 4,
         "rbi": 4,
-        "avg": ".263"
+        "avg": ".211"
+      }
+    },
+    {
+      "name": "高義博",
+      "avg": ".240",
+      "ab": 359,
+      "hr": 4,
+      "rbi": 26,
+      "sb": 45,
+      "recent": {
+        "games": 5,
+        "ab": 20,
+        "h": 3,
+        "rbi": 0,
+        "avg": ".150"
       }
     }
   ],
@@ -106,10 +106,10 @@
       "so": 44,
       "recent": {
         "apps": 2,
-        "ip": "12.0",
-        "er": 2,
-        "so": 5,
-        "era": "1.50"
+        "ip": "11.0",
+        "er": 5,
+        "so": 3,
+        "era": "4.09"
       }
     }
   ],
@@ -123,20 +123,20 @@
     "大川陽大": {
       "avg_rank": 3,
       "hr_rank": 3,
-      "rbi_rank": 3,
+      "rbi_rank": 4,
       "sb_rank": 4
-    },
-    "高義博": {
-      "avg_rank": 6,
-      "hr_rank": 7,
-      "rbi_rank": 8,
-      "sb_rank": 1
     },
     "園部佳太": {
       "avg_rank": 7,
       "hr_rank": 8,
       "rbi_rank": 5,
       "sb_rank": 6
+    },
+    "高義博": {
+      "avg_rank": 8,
+      "hr_rank": 7,
+      "rbi_rank": 8,
+      "sb_rank": 1
     },
     "笠原祥太郎": {
       "era_rank": 1,
@@ -150,12 +150,18 @@
   "recent": {
     "streak": null,
     "monthRecord": {
-      "wins": 2,
+      "wins": 3,
       "losses": 4,
       "ties": 0
     },
-    "recent5": "LWLLW",
+    "recent5": "WLWLL",
     "lastGames": [
+      {
+        "opponent": "楽天",
+        "oisixScore": 5,
+        "oppScore": 3,
+        "result": "W"
+      },
       {
         "opponent": "西武",
         "oisixScore": 0,
@@ -197,12 +203,6 @@
         "oisixScore": 5,
         "oppScore": 7,
         "result": "L"
-      },
-      {
-        "opponent": "日本ハム",
-        "oisixScore": 4,
-        "oppScore": 1,
-        "result": "W"
       }
     ]
   }

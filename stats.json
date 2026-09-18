@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-17",
+  "updated": "2026-09-18",
   "oisix": {
     "rank": 5,
     "wins": 42,
@@ -55,10 +55,10 @@
       "sb": 5,
       "recent": {
         "games": 5,
-        "ab": 19,
+        "ab": 17,
         "h": 4,
         "rbi": 3,
-        "avg": ".211"
+        "avg": ".235"
       }
     },
     {
@@ -88,11 +88,11 @@
       "ip": "101.2",
       "so": 61,
       "recent": {
-        "apps": 1,
-        "ip": "6.0",
-        "er": 1,
-        "so": 6,
-        "era": "1.50"
+        "apps": 2,
+        "ip": "12.1",
+        "er": 3,
+        "so": 10,
+        "era": "2.19"
       }
     },
     {
@@ -148,14 +148,23 @@
     }
   },
   "recent": {
-    "streak": null,
+    "streak": {
+      "type": "L",
+      "count": 2
+    },
     "monthRecord": {
       "wins": 3,
-      "losses": 5,
+      "losses": 6,
       "ties": 0
     },
-    "recent5": "LWLWL",
+    "recent5": "LLWLW",
     "lastGames": [
+      {
+        "opponent": "巨人",
+        "oisixScore": 0,
+        "oppScore": 2,
+        "result": "L"
+      },
       {
         "opponent": "楽天",
         "oisixScore": 1,
@@ -197,12 +206,6 @@
         "oisixScore": 9,
         "oppScore": 7,
         "result": "W"
-      },
-      {
-        "opponent": "ハヤテ",
-        "oisixScore": 0,
-        "oppScore": 7,
-        "result": "L"
       }
     ]
   }

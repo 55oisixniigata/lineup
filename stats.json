@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-19",
+  "updated": "2026-09-20",
   "oisix": {
     "rank": 5,
     "wins": 43,
@@ -25,10 +25,10 @@
       "sb": 9,
       "recent": {
         "games": 5,
-        "ab": 18,
-        "h": 5,
+        "ab": 16,
+        "h": 4,
         "rbi": 3,
-        "avg": ".278"
+        "avg": ".250"
       }
     },
     {
@@ -41,9 +41,9 @@
       "recent": {
         "games": 5,
         "ab": 12,
-        "h": 2,
+        "h": 1,
         "rbi": 0,
-        "avg": ".167"
+        "avg": ".083"
       }
     },
     {
@@ -55,10 +55,10 @@
       "sb": 46,
       "recent": {
         "games": 5,
-        "ab": 21,
+        "ab": 20,
         "h": 3,
         "rbi": 0,
-        "avg": ".143"
+        "avg": ".150"
       }
     },
     {
@@ -70,10 +70,10 @@
       "sb": 5,
       "recent": {
         "games": 5,
-        "ab": 17,
-        "h": 4,
-        "rbi": 3,
-        "avg": ".235"
+        "ab": 14,
+        "h": 2,
+        "rbi": 0,
+        "avg": ".143"
       }
     }
   ],
@@ -105,11 +105,11 @@
       "ip": "93.1",
       "so": 44,
       "recent": {
-        "apps": 2,
-        "ip": "11.0",
-        "er": 5,
-        "so": 3,
-        "era": "4.09"
+        "apps": 1,
+        "ip": "5.0",
+        "er": 3,
+        "so": 0,
+        "era": "5.40"
       }
     }
   ],
@@ -148,17 +148,20 @@
     }
   },
   "recent": {
-    "streak": {
-      "type": "L",
-      "count": 2
-    },
+    "streak": null,
     "monthRecord": {
-      "wins": 3,
+      "wins": 4,
       "losses": 6,
       "ties": 0
     },
-    "recent5": "LLWLW",
+    "recent5": "WLLWL",
     "lastGames": [
+      {
+        "opponent": "ヤクルト",
+        "oisixScore": 3,
+        "oppScore": 2,
+        "result": "W"
+      },
       {
         "opponent": "巨人",
         "oisixScore": 0,
@@ -200,12 +203,6 @@
         "oisixScore": 3,
         "oppScore": 4,
         "result": "L"
-      },
-      {
-        "opponent": "ハヤテ",
-        "oisixScore": 9,
-        "oppScore": 7,
-        "result": "W"
       }
     ]
   }

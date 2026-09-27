@@ -1,55 +1,55 @@
 {
-  "updated": "2026-09-26",
+  "updated": "2026-09-27",
   "oisix": {
     "rank": 5,
-    "wins": 45,
+    "wins": 46,
     "losses": 69,
     "ties": 4,
-    "pct": ".395",
-    "home": "22-30(3)",
+    "pct": ".400",
+    "home": "23-30(3)",
     "road": "23-39(1)"
   },
   "headToHead": {
     "日本ハム": "4-14",
     "楽天": "10-9",
-    "ロッテ": "6-12(1)",
+    "ロッテ": "7-12(1)",
     "ヤクルト": "6-6(1)"
   },
   "batting": [
     {
       "name": "小西慶治",
-      "avg": ".264",
-      "ab": 409,
+      "avg": ".265",
+      "ab": 411,
       "hr": 11,
       "rbi": 54,
       "sb": 10,
       "recent": {
         "games": 5,
-        "ab": 19,
+        "ab": 21,
         "h": 3,
         "rbi": 1,
-        "avg": ".158"
+        "avg": ".143"
       }
     },
     {
       "name": "大川陽大",
-      "avg": ".263",
-      "ab": 350,
+      "avg": ".262",
+      "ab": 351,
       "hr": 5,
       "rbi": 40,
       "sb": 6,
       "recent": {
         "games": 5,
-        "ab": 17,
+        "ab": 18,
         "h": 5,
         "rbi": 1,
-        "avg": ".294"
+        "avg": ".278"
       }
     },
     {
       "name": "高義博",
-      "avg": ".252",
-      "ab": 385,
+      "avg": ".254",
+      "ab": 390,
       "hr": 5,
       "rbi": 30,
       "sb": 48,
@@ -63,29 +63,29 @@
     },
     {
       "name": "園部佳太",
-      "avg": ".248",
-      "ab": 282,
+      "avg": ".247",
+      "ab": 283,
       "hr": 3,
-      "rbi": 38,
+      "rbi": 39,
       "sb": 6,
       "recent": {
         "games": 3,
-        "ab": 5,
-        "h": 2,
-        "rbi": 0,
-        "avg": ".400"
+        "ab": 7,
+        "h": 4,
+        "rbi": 1,
+        "avg": ".571"
       }
     }
   ],
   "pitching": [
     {
       "name": "笠原祥太郎",
-      "era": "4.16",
-      "apps": 19,
+      "era": "4.13",
+      "apps": 20,
       "wins": 5,
       "losses": 8,
       "saves": 0,
-      "ip": "101.2",
+      "ip": "106.2",
       "so": 61,
       "recent": {
         "apps": 1,
@@ -139,23 +139,29 @@
       "sb_rank": 5
     },
     "笠原祥太郎": {
-      "era_rank": 1,
-      "so_rank": 2
-    },
-    "南波秀": {
       "era_rank": 2,
       "so_rank": 3
+    },
+    "南波秀": {
+      "era_rank": 3,
+      "so_rank": 4
     }
   },
   "recent": {
     "streak": null,
     "monthRecord": {
       "wins": 5,
-      "losses": 5,
-      "ties": 0
+      "losses": 4,
+      "ties": 1
     },
-    "recent5": "WLWWL",
+    "recent5": "TWLWW",
     "lastGames": [
+      {
+        "opponent": "ロッテ",
+        "oisixScore": 3,
+        "oppScore": 3,
+        "result": "T"
+      },
       {
         "opponent": "ロッテ",
         "oisixScore": 7,
@@ -197,12 +203,6 @@
         "oisixScore": 5,
         "oppScore": 3,
         "result": "W"
-      },
-      {
-        "opponent": "西武",
-        "oisixScore": 0,
-        "oppScore": 10,
-        "result": "L"
       }
     ]
   }

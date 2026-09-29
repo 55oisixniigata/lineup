@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-27",
+  "updated": "2026-09-29",
   "oisix": {
     "rank": 5,
     "wins": 46,
@@ -25,10 +25,10 @@
       "sb": 10,
       "recent": {
         "games": 5,
-        "ab": 21,
-        "h": 3,
+        "ab": 20,
+        "h": 4,
         "rbi": 1,
-        "avg": ".143"
+        "avg": ".200"
       }
     },
     {
@@ -40,10 +40,10 @@
       "sb": 6,
       "recent": {
         "games": 5,
-        "ab": 18,
-        "h": 5,
+        "ab": 15,
+        "h": 4,
         "rbi": 1,
-        "avg": ".278"
+        "avg": ".267"
       }
     },
     {
@@ -55,10 +55,10 @@
       "sb": 48,
       "recent": {
         "games": 5,
-        "ab": 22,
+        "ab": 24,
         "h": 11,
         "rbi": 4,
-        "avg": ".500"
+        "avg": ".458"
       }
     },
     {
@@ -70,10 +70,10 @@
       "sb": 6,
       "recent": {
         "games": 3,
-        "ab": 7,
+        "ab": 6,
         "h": 4,
-        "rbi": 1,
-        "avg": ".571"
+        "rbi": 2,
+        "avg": ".667"
       }
     }
   ],
@@ -88,11 +88,11 @@
       "ip": "106.2",
       "so": 61,
       "recent": {
-        "apps": 1,
-        "ip": "6.1",
-        "er": 2,
+        "apps": 2,
+        "ip": "11.1",
+        "er": 4,
         "so": 4,
-        "era": "2.84"
+        "era": "3.18"
       }
     },
     {
@@ -105,11 +105,11 @@
       "ip": "99",
       "so": 50,
       "recent": {
-        "apps": 2,
-        "ip": "10.2",
-        "er": 6,
+        "apps": 1,
+        "ip": "5.2",
+        "er": 3,
         "so": 6,
-        "era": "5.06"
+        "era": "4.76"
       }
     }
   ],
@@ -154,8 +154,14 @@
       "losses": 4,
       "ties": 1
     },
-    "recent5": "TWLWW",
+    "recent5": "WTWLW",
     "lastGames": [
+      {
+        "opponent": "ロッテ",
+        "oisixScore": 5,
+        "oppScore": 3,
+        "result": "W"
+      },
       {
         "opponent": "ロッテ",
         "oisixScore": 3,
@@ -197,12 +203,6 @@
         "oisixScore": 1,
         "oppScore": 2,
         "result": "L"
-      },
-      {
-        "opponent": "楽天",
-        "oisixScore": 5,
-        "oppScore": 3,
-        "result": "W"
       }
     ]
   }

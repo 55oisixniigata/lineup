@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-30",
+  "updated": "2026-10-01",
   "oisix": {
     "rank": 5,
     "wins": 46,
@@ -150,9 +150,9 @@
   "recent": {
     "streak": null,
     "monthRecord": {
-      "wins": 5,
-      "losses": 4,
-      "ties": 1
+      "wins": 0,
+      "losses": 0,
+      "ties": 0
     },
     "recent5": "WTWLW",
     "lastGames": [
